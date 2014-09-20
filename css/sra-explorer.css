@@ -1,0 +1,17 @@
+/*
+SRA-Explorer
+Custom CSS code.
+Phil Ewels, 2014
+*/
+
+/* Core structural setup */
+body {
+  padding-top: 50px;
+}
+
+/* MS Explorer Bug */
+@-webkit-viewport   { width: device-width; }
+@-moz-viewport      { width: device-width; }
+@-ms-viewport       { width: device-width; }
+@-o-viewport        { width: device-width; }
+@viewport           { width: device-width; }

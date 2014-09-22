@@ -53,13 +53,19 @@
 		<table class="table">
 			<thead>
 				<tr>
+					<th>Title</th>
 					<th>Accession</th>
+					<th>Instrument</th>
+					<th>Total Bases (Mb)</th>
 					<th>Date Created</th>
 				</tr>
 			</thead>
 			<tbody>
 			  <tr ng-repeat="x in results">
-			    <td>{{ x.runs }}</td>
+			    <td>{{ x.expxml.Title }}</td>
+			    <td>{{ x.runs.acc }}</td>
+			    <td>{{ x.runs.expxml.Platform.attributes.instrument_model }}</td>
+					<td>{{ x.runs.total_bases / 100000}}</td>
 			    <td>{{ x.createdate }}</td>
 			  </tr>
 			</tbody>

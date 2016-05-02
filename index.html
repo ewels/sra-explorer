@@ -51,19 +51,29 @@
 		<div class="jumbotron">
 			<h1>SRA Explorer</h1>
 			<p>This tool aims to make datasets within the Sequence Read Archive more accessible.</p>
-			<form class="form-inline" role="search">
-			  <div class="form-group">
-			    <label for="searchText">Search for:</label>
-					<div class="input-group">
-						<div class="form-group has-feedback has-clear">
-							<input ng-model="searchText" id="searchText" type="text" class="form-control input-lg" placeholder="Enter accession number">
-							<a class="glyphicon glyphicon-remove-sign form-control-feedback form-control-clear" ng-click="searchText = ''" ng-show="searchText.length"></a>
-						</div>
-						<div class="input-group-btn">
-							<button ng_click="search()" class="btn btn-default btn-lg" type="submit"><span class="glyphicon glyphicon-search"></span></button>
+			<form class="form-horizontal" role="search">
+				<div class="form-group form-group-lg">
+			    <label class="col-sm-2 control-label" for="searchText">Search for:</label>
+					<div class="col-sm-10">
+						<div class="input-group">
+							<div class="has-feedback has-clear">
+								<input ng-model="searchText" id="searchText" type="text" class="form-control" placeholder="Enter accession number">
+								<a class="glyphicon glyphicon-remove-sign form-control-feedback form-control-clear" ng-click="searchText = ''" ng-show="searchText.length"></a>
+							</div>
+							<div class="input-group-btn">
+								<button ng_click="search()" class="btn btn-default btn-lg" type="submit"><span class="glyphicon glyphicon-search"></span></button>
+							</div>
 						</div>
 					</div>
 			  </div>
+				<span id="helpBlock" class="help-block">
+					Need inspiration? Try
+					<code ng-click="searchText='GSE30567'; search()" style="cursor:pointer;">GSE30567</code>,
+					<code ng-click="searchText='SRP043510'; search()" style="cursor:pointer;">SRP043510</code>,
+					<code ng-click="searchText='PRJEB8073'; search()" style="cursor:pointer;">PRJEB8073</code>,
+					<code ng-click="searchText='ERP009109'; search()" style="cursor:pointer;">ERP009109</code> or
+					<code ng-click="searchText='human liver miRNA'; search()" style="cursor:pointer;">human liver miRNA</code>.
+				</span>
 			</form>
 		</div>
 
@@ -133,7 +143,7 @@
 				    <td>{{ x.accession }}</td>
 				    <td>{{ x.platform }}</td>
 						<td>{{ x.total_bases }}</td>
-				    <td>{{ x.createdate }}</td>
+				    <td>{{ x.createdate | date:'dd MMM yyyy' }}</td>
 				  </tr>
 				</tbody>
 			</table>

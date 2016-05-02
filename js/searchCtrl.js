@@ -64,7 +64,7 @@ app.controller("searchCtrl", function($scope, $http) {
                 'accession': value.runs.acc,
                 'platform': value.expxml.Platform.attributes.instrument_model,
                 'total_bases': Math.round(value.runs.total_bases / 100000),
-                'createdate': value.createdate,
+                'createdate': Date.parse(value.createdate),
               });
             } catch(e){
               console.log(e);

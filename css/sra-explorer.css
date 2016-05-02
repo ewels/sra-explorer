@@ -9,9 +9,36 @@ body {
   padding-top: 50px;
 }
 
-/* MS Explorer Bug */
-@-webkit-viewport   { width: device-width; }
-@-moz-viewport      { width: device-width; }
-@-ms-viewport       { width: device-width; }
-@-o-viewport        { width: device-width; }
-@viewport           { width: device-width; }
+/* Styles for little clear button on search fields */
+.form-control-clear, .form-control-clear:hover, .form-control-clear:focus, .form-control-clear:active {
+  pointer-events: auto;
+  text-decoration: none;
+  cursor: pointer;
+  color: #999;
+  z-index: 4;
+}
+.form-control-clear:hover, .form-control-clear:focus, .form-control-clear:active {
+  color: #666;
+}
+
+/* Make button links have proper styling */
+a[ng-click]{
+    cursor: pointer;
+}
+
+/* Page Header */
+.jumbotron {
+  margin-top: 30px;
+}
+.jumbotron h1 {
+  margin-top: 0;
+}
+.jumbotron label {
+  font-size: 1.6em;
+  margin-bottom: 0;
+  margin-right: 10px;
+  border-bottom: 5px solid #f8b43b;
+}
+#searchText {
+  width: 300px;
+}

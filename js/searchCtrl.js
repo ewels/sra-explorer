@@ -6,10 +6,14 @@ Phil Ewels, 2014
 
 
 app.controller("searchCtrl", function($scope, $http) {
+  
     $scope.searchText = "";
 		$scope.numSearchResults = 0;
 		$scope.summaryURL = 0;
 		$scope.loadingSpinner = 0;
+    $scope.searchResults = 0;
+    $scope.sortType = '';
+    
     $scope.search  = function() { searchSRA($scope.searchText); };
 		
 		/* Search Function */
@@ -24,12 +28,13 @@ app.controller("searchCtrl", function($scope, $http) {
 				var webenv = s_response.esearchresult.webenv;
 				var querykey = s_response.esearchresult.querykey;
 				var retstart = 0;
-				var retmax = 10;
+				var retmax = 100;
 				var resultsURL = 'http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=sra&retmode=json&query_key='+querykey+'&WebEnv='+webenv+'&retstart='+retstart+'&retmax='+retmax;
 				$scope.summaryURL = resultsURL;
 				$http.get(resultsURL).success(function(response) {
 					$scope.loadingSpinner = 0;
-					console.log(response.result);
+          $scope.searchResults = 1;
+          $scope.results = [];
 					// Parse the stupid embedded XML
 					angular.forEach(response.result, function(value, key) {
 						// Exp XML
@@ -51,14 +56,42 @@ app.controller("searchCtrl", function($scope, $http) {
 							runs = runsJSON.Run.attributes;
 							value.runs = runs;
 						}
+            
+            // Add results to scope
+            try {
+              $scope.results.push({
+                'title': value.expxml.Title.text,
+                'accession': value.runs.acc,
+                'platform': value.expxml.Platform.attributes.instrument_model,
+                'total_bases': Math.round(value.runs.total_bases / 100000),
+                'createdate': value.createdate,
+              });
+            } catch(e){
+              console.log(e);
+              console.log({key: value});
+            }
+            
 					});
-					// Remove useless uids object
-					delete response.result.uids;
-					console.log(response.result);
-					$scope.results = response.result;
+          
+          // console.log(response.result);
+          
 				});
 			});
 		}
+    
+    // Toggle row selection checkboxes
+    $scope.toggleRow = function($event, obj) {
+      $event.stopPropagation();
+      obj.selected = !obj.selected;
+    }
+    $scope.rowClicked = function(obj) {
+      obj.selected = !obj.selected;
+    };
+    $scope.checkAll = function () {
+      angular.forEach($scope.filteredResults, function (item) {
+        item.selected = $scope.selectAll;
+      });
+    };
 		
 });
 
@@ -87,7 +120,7 @@ function xmlToJson(xml) {
 	if (xml.hasChildNodes()) {
 		for(var i = 0; i < xml.childNodes.length; i++) {
 			var item = xml.childNodes.item(i);
-			var nodeName = item.nodeName;
+			var nodeName = item.nodeName.replace('#','');
 			if (typeof(obj[nodeName]) == "undefined") {
 				obj[nodeName] = xmlToJson(item);
 			} else {

@@ -35,3 +35,11 @@ a[ng-click]{
 }
 
 
+/* Saved datasets */
+#savedDatasets pre {
+  overflow-x: auto;
+}
+#savedDatasets pre code {
+  font-size: 10px;
+  white-space: pre;
+}

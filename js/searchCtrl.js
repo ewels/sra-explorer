@@ -8,20 +8,24 @@ Phil Ewels, 2014
 app.controller("searchCtrl", function($scope, $http) {
   
     $scope.searchText = "";
-		$scope.numSearchResults = 0;
 		$scope.summaryURL = 0;
 		$scope.loadingSpinner = 0;
-    $scope.searchResults = 0;
     $scope.sortType = '';
+    $scope.results = [];
+    $scope.savedResults = [];
+    $scope.showSaved = false;
+    $scope.tabChr = "\t";
+    $scope.nlChr = "\n";
     
     $scope.search  = function() { searchSRA($scope.searchText); };
 		
 		/* Search Function */
 		function searchSRA (string) {
+      $scope.showSaved = false;
 			$scope.loadingSpinner = 1;
+      $scope.results = [];
 			var searchURL = 'http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=sra&usehistory=y&retmode=json&term='+string;
 		  $http.get(searchURL).success(function(s_response) {
-				$scope.numSearchResults = s_response.esearchresult.count;
 				if(s_response.esearchresult.querytranslation){
 					$scope.searchText = s_response.esearchresult.querytranslation;
 				}
@@ -33,8 +37,6 @@ app.controller("searchCtrl", function($scope, $http) {
 				$scope.summaryURL = resultsURL;
 				$http.get(resultsURL).success(function(response) {
 					$scope.loadingSpinner = 0;
-          $scope.searchResults = 1;
-          $scope.results = [];
 					// Parse the stupid embedded XML
 					angular.forEach(response.result, function(value, key) {
 						// Exp XML
@@ -65,6 +67,8 @@ app.controller("searchCtrl", function($scope, $http) {
                 'platform': value.expxml.Platform.attributes.instrument_model,
                 'total_bases': Math.round(value.runs.total_bases / 100000),
                 'createdate': Date.parse(value.createdate),
+                'cleanTitle': value.expxml.Title.text.replace(/[^a-z0-9\._\-]/gi, '_').replace(/_+/g, '_'),
+                'url': "ftp://ftp-trace.ncbi.nlm.nih.gov/sra/sra-instant/reads/ByRun/sra/"+value.runs.acc.substring(0,3)+"/"+value.runs.acc.substring(0,6)+"/"+value.runs.acc+"/"+value.runs.acc+".sra"
               });
             } catch(e){
               console.log(e);
@@ -92,6 +96,39 @@ app.controller("searchCtrl", function($scope, $http) {
         item.selected = $scope.selectAll;
       });
     };
+    $scope.$watch('filteredResults', function(items){
+      var selectedItems = 0;
+      angular.forEach(items, function(item){
+        selectedItems += item.selected ? 1 : 0;
+      });
+      $scope.selectedItems = selectedItems;
+    }, true);
+    
+    // Save datasets
+    $scope.saveDatasets = function() {
+      angular.forEach($scope.filteredResults, function(item){
+        if(item.selected){
+          $scope.savedResults.push( angular.copy(item) );
+        }
+      });
+    };
+    
+    // Show saved datasets
+    $scope.checkoutButton = function(){
+      // Clear search results and show saved
+      $scope.results = [];
+      $scope.summaryURL = 0;
+      $scope.loadingSpinner = 0;
+      $scope.showSaved = true;
+    }
+    
+    // Send saved datasets back to table
+    $scope.returnSaved = function() {
+      // Clear search results and show saved
+      $scope.results = angular.copy( $scope.savedResults );
+      $scope.savedResults = [];
+      $scope.showSaved = false;
+    }
 		
 });
 

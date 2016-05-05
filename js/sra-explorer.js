@@ -4,7 +4,7 @@ Angular JS Search Controller
 Phil Ewels, 2014
 */
 
-
+var app = angular.module("sraExplorerApp", []);
 app.controller("searchCtrl", function($scope, $http) {
   
     $scope.searchText = "";
@@ -172,3 +172,9 @@ function xmlToJson(xml) {
 	}
 	return obj;
 };
+
+// Activate the copy buttons
+new Clipboard('.btn-copy');
+
+
+

@@ -72,7 +72,6 @@
 			</form>
 		</div>
 
-		<p ng-show="summaryURL">Query URL = <code ng-bind="summaryURL"></code></p>
 		<p ng-show="loadingSpinner" class="text-center"><span class="glyphicon glyphicon-refresh fa-spin"></span> Loading..</p>
 		
 		<div ng-show="results.length > 0">
@@ -194,6 +193,8 @@
 			
 		</div>
 		
+		<p ng-show="summaryURL">Query URL = <code ng-bind="summaryURL"></code></p>
+		
 	</div><!-- /.container -->
 	
 	<hr>
@@ -208,8 +209,6 @@
 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.9/angular.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.5.10/clipboard.min.js"></script>
 	<!-- SRA-Explorer Code -->
-	<script src="js/sra-explorer_core.js"></script>
-	<script src="js/sraExplorerApp.js"></script>
-	<script src="js/searchCtrl.js"></script>
+	<script src="js/sra-explorer.js"></script>
 </body>
 </html>

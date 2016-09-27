@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en" ng-app="sraExplorerApp">
 <head>
@@ -283,7 +282,7 @@
                 $scope.showSaved = false;
                 $scope.loadingSpinner = 1;
                 $scope.results = [];
-                var searchURL = 'http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=sra&usehistory=y&retmode=json&term='+string;
+                var searchURL = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=sra&usehistory=y&retmode=json&term='+string;
                 $http.get(searchURL).success(function(s_response) {
                     if(s_response.esearchresult.querytranslation){
                         $scope.searchText = s_response.esearchresult.querytranslation;
@@ -292,7 +291,7 @@
                     var querykey = s_response.esearchresult.querykey;
                     var retstart = 0;
                     var retmax = $scope.maxResults;
-                    var resultsURL = 'http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=sra&retmode=json&query_key='+querykey+'&WebEnv='+webenv+'&retstart='+retstart+'&retmax='+retmax;
+                    var resultsURL = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=sra&retmode=json&query_key='+querykey+'&WebEnv='+webenv+'&retstart='+retstart+'&retmax='+retmax;
                     $scope.summaryURL = resultsURL;
                     $http.get(resultsURL).success(function(response) {
                         $scope.loadingSpinner = 0;
@@ -435,6 +434,11 @@
         // Activate the copy buttons
         new Clipboard('.btn-copy');
         
+    </script>
+    <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+        ga('create', 'UA-51481908-2', 'auto');
+        ga('send', 'pageview');
     </script>
 </body>
 </html>

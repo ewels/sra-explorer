@@ -125,9 +125,10 @@
         <div ng-show="results.length > 0">
             <hr>
             
-            <p>Showing <span ng-bind="filteredResults.length" class="badge"></span> results. Select relevant datasets and click
-                <em>add to collection</em>. When you're finished, view all saved dataset with the button in the top right of the
-                page, where you can copy all SRA download URLs.</p>
+            <p>Showing <span ng-bind="filteredResults.length" class="badge"></span> results.</p>
+            <p class="text-muted">Select relevant datasets and click <em>add to collection</em>.
+                When you're finished, view all saved datasets with the button in the top right of the
+                page, where you can copy the SRA URLs.</p>
             
             <button class="pull-right btn btn-primary" ng-class="{disabled: selectedItems == 0}" ng-click="saveDatasets()">Add <span ng-bind="selectedItems">0</span> to collection</button>
             

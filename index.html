@@ -210,7 +210,7 @@
                 <div class="panel-heading" role="tab">
                   <h4 class="panel-title">
                     <a role="button" data-toggle="collapse" data-parent="#savedDatasetsAccordion" href="#ftpURLs">
-                                FTP Download URLs
+                                Raw Download URLs
                             </a>
                         </h4>
                     </div>
@@ -226,8 +226,25 @@
                 <div class="panel panel-default">
                     <div class="panel-heading" role="tab">
                         <h4 class="panel-title">
+                            <a role="button" data-toggle="collapse" data-parent="#savedDatasetsAccordion" href="#ftpURLs_bashCURL">
+                                Bash script for downloading (nice filenames)
+                            </a>
+                        </h4>
+                    </div>
+                    <div id="ftpURLs_bashCURL" class="panel-collapse collapse" role="tabpanel">
+                        <div class="panel-body">
+                            <p>This list of bash <code>curl</code> commands to download each SRA file and save with a nicer filename, with the cleaned dataset title appended.</p>
+                            <p><button class="btn btn-sm btn-default btn-copy" data-clipboard-target="#ftpURLs_bashCURL_content"><span class="glyphicon glyphicon-copy"></span> Copy</button></p>
+                            <pre id="ftpURLs_bashCURL_content"><code>#!/usr/bin/env bash</code><code ng-repeat="x in savedResults">{{ nlChr }}curl -L {{ x.url }} -o {{ x.accession }}_{{ x.cleanTitle }}.sra</code></pre>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="panel panel-default">
+                    <div class="panel-heading" role="tab">
+                        <h4 class="panel-title">
                             <a role="button" data-toggle="collapse" data-parent="#savedDatasetsAccordion" href="#ftpURLs_niceNames">
-                                FTP Download URLs with nice filenames (Cluster Flow)
+                                Cluster Flow download file (nice filename)
                             </a>
                         </h4>
                     </div>

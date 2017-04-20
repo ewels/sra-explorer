@@ -92,7 +92,7 @@
                     <div class="col-sm-10">
                         <div class="input-group">
                             <div class="has-feedback has-clear">
-                                <input ng-model="searchText" id="searchText" type="text" class="form-control" placeholder="Enter accession number">
+                                <input ng-model="searchText" id="searchText" type="text" class="form-control" placeholder="Enter accession number" required>
                                 <a class="glyphicon glyphicon-remove-sign form-control-feedback form-control-clear" ng-click="searchText = ''" ng-show="searchText.length"></a>
                             </div>
                             <div class="input-group-btn">
@@ -104,7 +104,12 @@
                 <div class="form-group">
                     <label class="col-sm-2 control-label" for="maxResults">Max Results</label>
                     <div class="col-sm-2">
-                        <input type="input" class="form-control" id="maxResults" ng-model="maxResults" value="100">
+                        <input type="number" max="500" class="form-control" id="maxResults" ng-model="maxResults" value="100" required>
+                    </div>
+
+                    <label class="col-sm-2 control-label" for="retstart">Start At Record</label>
+                    <div class="col-sm-2">
+                        <input type="number" class="form-control" id="retstart" ng-model="retstart" value="0" required>
                     </div>
                 </div>
                 <span id="helpBlock" class="help-block">
@@ -282,6 +287,7 @@
 
             $scope.searchText = "";
             $scope.maxResults = 100;
+            $scope.retstart = 0;
             $scope.summaryURL = 0;
             $scope.loadingSpinner = 0;
             $scope.sortType = '';
@@ -305,8 +311,8 @@
                     }
                     var webenv = s_response.esearchresult.webenv;
                     var querykey = s_response.esearchresult.querykey;
-                    var retstart = 0;
                     var retmax = $scope.maxResults;
+                    var retstart = $scope.retstart;
                     var resultsURL = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=sra&retmode=json&query_key='+querykey+'&WebEnv='+webenv+'&retstart='+retstart+'&retmax='+retmax;
                     $scope.summaryURL = resultsURL;
                     $http.get(resultsURL).success(function(response) {
@@ -382,7 +388,15 @@
             $scope.saveDatasets = function() {
               angular.forEach($scope.filteredResults, function(item){
                 if(item.selected){
-                  $scope.savedResults.push( angular.copy(item) );
+                  var alreadyAdded = false;
+                  for (i=0; i<$scope.savedResults.length; i++){
+                    if (item['accession'] == $scope.savedResults[i]['accession']){
+                      alreadyAdded = true;
+                    }
+                  }
+                  if(!alreadyAdded){
+                    $scope.savedResults.push( angular.copy(item) );
+                  }
                 }
               });
             };

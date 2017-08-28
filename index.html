@@ -193,9 +193,9 @@
                   <tr ng-repeat="x in results | orderBy:sortType:sortReverse | filter:filterText as filteredResults" ng-click="rowClicked(x)" ng-class="{ success: x.selected }">
                         <td><input type="checkbox" ng-checked="x.selected" ng-click="toggleRow($event, x)"></td>
                     <td>{{ x.title }}</td>
-                    <td>{{ x.accession }}</td>
+                    <td><a href="https://www.ncbi.nlm.nih.gov/sra/?term={{ x.accession }}" target="_blank">{{ x.accession }}</a></td>
                     <td>{{ x.platform }}</td>
-                        <td>{{ x.total_bases }}</td>
+                    <td>{{ x.total_bases }}</td>
                     <td>{{ x.createdate | date:'dd MMM yyyy' }}</td>
                   </tr>
                 </tbody>

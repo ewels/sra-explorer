@@ -320,22 +320,22 @@
                         // Parse the stupid embedded XML
                         angular.forEach(response.result, function(value, key) {
                             // Exp XML
-                            expXMLraw = $('<div/>').html(value.expxml).text();
+                            expXMLraw = '<document>'+$('<div/>').html(value.expxml).text().trim()+'</document>';
                             parser = new DOMParser();
                             expXML = parser.parseFromString(expXMLraw,"text/xml");
                             expJSON = xmlToJson(expXML);
-                            if(expJSON.Summary){
-                                exp = expJSON.Summary;
+                            if(expJSON.document.Summary){
+                                exp = expJSON.document.Summary;
                                 value.expxml = exp;
                             }
 
                             // Runs
-                            runsXMLraw = $('<div/>').html(value.runs).text();
+                            runsXMLraw = '<document>'+$('<div/>').html(value.runs).text().trim()+'</document>';
                             parser = new DOMParser();
                             runsXML = parser.parseFromString(runsXMLraw,"text/xml");
                             runsJSON = xmlToJson(runsXML);
-                            if(runsJSON.Run){
-                                runs = runsJSON.Run.attributes;
+                            if(runsJSON.document.Run){
+                                runs = runsJSON.document.Run.attributes;
                                 value.runs = runs;
                             }
 

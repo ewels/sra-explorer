@@ -254,7 +254,7 @@
               <div class="panel panel-default">
                 <div class="panel-heading" role="tab">
                   <h4 class="panel-title">
-                    <a role="button" data-toggle="collapse" data-parent="#savedDatasetsAccordion" href="#fastqURLs_niceNames">Cluster Flow FastQ download file (nice filename)</a>
+                    <a role="button" data-toggle="collapse" data-parent="#savedDatasetsAccordion" href="#fastqURLs_niceNames">Cluster Flow FastQ download file (nice filenames)</a>
                   </h4>
                 </div>
                 <div id="fastqURLs_niceNames" class="panel-collapse collapse" role="tabpanel">
@@ -263,6 +263,22 @@
                     <p><button class="btn btn-sm btn-default btn-copy" data-clipboard-target="#fastqURLs_niceNames_content"><span class="glyphicon glyphicon-copy"></span> Copy</button></p>
                     <p ng-show="savedResultsENAaccessions.length < savedResults.length" class="text-center"><span class="glyphicon glyphicon-refresh fa-spin"></span> Loading <span class="badge"><span ng-bind="savedResultsENAaccessions.length"></span> / <span ng-bind="savedResults.length"></span></span>..</p>
                     <pre ng-show="savedResultsENAfastq.length > 0" id="fastqURLs_niceNames_content"><code ng-repeat="x in savedResultsENAfastq">{{ x.url }}{{ tabChr }}{{ x.niceFilename }}{{ nlChr }}</code></pre>
+                  </div>
+                </div>
+              </div>
+
+              <div class="panel panel-default">
+                <div class="panel-heading" role="tab">
+                  <h4 class="panel-title">
+                    <a role="button" data-toggle="collapse" data-parent="#savedDatasetsAccordion" href="#fastqURLs_bcbio">bcbio project file for FastQ downloads (nice filenames)</a>
+                  </h4>
+                </div>
+                <div id="fastqURLs_bcbio" class="panel-collapse collapse" role="tabpanel">
+                  <div class="panel-body">
+                    <p>This list of URLs is followed by a nicer filename. This is suitable for use with <a href="https://bcbio-nextgen.readthedocs.io/en/latest/" target="_blank">bcbio-nextgen</a> analysis pipelines.</p>
+                    <p><button class="btn btn-sm btn-default btn-copy" data-clipboard-target="#fastqURLs_bcbio_content"><span class="glyphicon glyphicon-copy"></span> Copy</button></p>
+                    <p ng-show="savedResultsENAaccessions.length < savedResults.length" class="text-center"><span class="glyphicon glyphicon-refresh fa-spin"></span> Loading <span class="badge"><span ng-bind="savedResultsENAaccessions.length"></span> / <span ng-bind="savedResults.length"></span></span>..</p>
+                    <pre ng-show="savedResultsENAfastq.length > 0" id="fastqURLs_bcbio_content"><code>samplename,description</code><code ng-repeat="x in savedResultsENAfastq">{{ nlChr }}{{ x.url }},{{ x.niceFilename }}</code></pre>
                   </div>
                 </div>
               </div>

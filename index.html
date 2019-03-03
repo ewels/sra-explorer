@@ -456,25 +456,32 @@
                             runsXML = parser.parseFromString(runsXMLraw,"text/xml");
                             runsJSON = xmlToJson(runsXML);
                             if(runsJSON.document.Run){
-                                runs = runsJSON.document.Run.attributes;
-                                value.runs = runs;
+                                value.runs = runsJSON.document.Run;
+                                // If only one SRR, make it an array
+                                if(!Array.isArray(value.runs)){
+                                    value.runs = [value.runs];
+                                }
+                                // Loop through each run result
+                                for(var i = 0; i < value.runs.length; i++){
+                                    // Add results to scope
+                                    try {
+                                      $scope.results.push({
+                                        'title': value.expxml.Title.text,
+                                        'accession': value.runs[i].attributes.acc,
+                                        'platform': value.expxml.Platform.attributes.instrument_model,
+                                        'total_bases': Math.round(value.runs[i].attributes.total_bases / 100000),
+                                        'createdate': Date.parse(value.createdate),
+                                        'cleanTitle': value.expxml.Title.text.replace(/[^a-z0-9\._\-]/gi, '_').replace(/_+/g, '_'),
+                                        'url': "ftp://ftp-trace.ncbi.nlm.nih.gov/sra/sra-instant/reads/ByRun/sra/"+value.runs[i].attributes.acc.substring(0,3)+"/"+value.runs[i].attributes.acc.substring(0,6)+"/"+value.runs[i].attributes.acc+"/"+value.runs[i].attributes.acc+".sra"
+                                      });
+                                    } catch(e){
+                                      console.log(e);
+                                      console.log({key: value});
+                                    }
+                                };
                             }
 
-                            // Add results to scope
-                            try {
-                              $scope.results.push({
-                                'title': value.expxml.Title.text,
-                                'accession': value.runs.acc,
-                                'platform': value.expxml.Platform.attributes.instrument_model,
-                                'total_bases': Math.round(value.runs.total_bases / 100000),
-                                'createdate': Date.parse(value.createdate),
-                                'cleanTitle': value.expxml.Title.text.replace(/[^a-z0-9\._\-]/gi, '_').replace(/_+/g, '_'),
-                                'url': "ftp://ftp-trace.ncbi.nlm.nih.gov/sra/sra-instant/reads/ByRun/sra/"+value.runs.acc.substring(0,3)+"/"+value.runs.acc.substring(0,6)+"/"+value.runs.acc+"/"+value.runs.acc+".sra"
-                              });
-                            } catch(e){
-                              console.log(e);
-                              console.log({key: value});
-                            }
+
 
                         });
 

@@ -45,6 +45,10 @@
         .jumbotron h1 {
           margin-top: 0;
         }
+        .jumbotron h1 a {
+          color: #333;
+          text-decoration: none;
+        }
 
         /* Saved datasets */
         #savedDatasets pre {
@@ -75,7 +79,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="#">SRA-Explorer</a>
+          <a class="navbar-brand" href="#" ng-click="returnToHomeButton()">SRA-Explorer</a>
         </div>
       <a href="#" class="btn navbar-btn navbar-right" ng-class="savedResults.length == 0 ? 'disabled btn-default' : 'btn-primary'" ng-click="checkoutButton()"><span class="glyphicon glyphicon-shopping-cart"></span> <span ng-bind="savedResults.length"></span> saved datasets</a>
         </div>
@@ -84,7 +88,7 @@
     <div class="container">
 
         <div class="jumbotron">
-            <h1>SRA Explorer</h1>
+            <h1><a href="#" ng-click="returnToHomeButton()">SRA Explorer</a></h1>
             <p>This tool aims to make datasets within the Sequence Read Archive more accessible.</p>
             <form class="form-horizontal" role="search">
                 <div class="form-group form-group-lg">
@@ -121,6 +125,11 @@
                     <code ng-click="searchText='human liver miRNA'; search()" style="cursor:pointer;">human liver miRNA</code>.
                 </span>
             </form>
+        </div>
+
+        <div class="alert alert-info" ng-show="savedResults.length > 0 && results.length == 0 && !showSaved">
+          You have {{ savedResults.length }} datasets in your collection.
+          <a href="#" ng-click="checkoutButton()">View saved datasets</a>.
         </div>
 
         <p ng-show="loadingSpinner" class="text-center"><span class="glyphicon glyphicon-refresh fa-spin"></span> Loading..</p>
@@ -637,6 +646,14 @@
               $scope.loadingSpinner = 0;
               $scope.showSaved = true;
               $scope.fetchFastqENA();
+            }
+
+            // Show saved datasets
+            $scope.returnToHomeButton = function(){
+              // Clear search results and hide results again
+              $scope.showSaved = false;
+              $scope.results = [];
+              $scope.searchText = '';
             }
 
             // Send saved datasets back to table

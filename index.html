@@ -692,7 +692,6 @@
             // Download contents as a file
             $scope.download_contents = function(target, filename){
                 var content = $(target).text();
-                console.log(target, content);
                 var blob = new Blob([content], { type: "text/plain;charset=utf-8" });
                 saveAs(blob, filename);
             }

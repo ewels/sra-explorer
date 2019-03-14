@@ -212,256 +212,268 @@
               <button ng-show="savedResults.length > 0" ng-click="returnSaved()" class="btn btn-default float-right">Send back to table</button>
             </h2>
 
-            <div ng-show="savedResults.length > 0" class="panel-group" id="savedDatasetsAccordion" role="tablist" aria-multiselectable="true">
+            <div>
+              <!-- Nav tabs -->
+              <ul class="nav nav-tabs" role="tablist">
+                <li class="active"><a href="#fastq_tabcontent" aria-controls="fastq_tabcontent" role="tab" data-toggle="tab">FastQ Downloads</a></li>
+                <li><a href="#sra_tabcontent" aria-controls="sra_tabcontent" role="tab" data-toggle="tab">SRA Downloads</a></li>
+                <li><a href="#full_metadata_tabcontent" aria-controls="full_metadata_tabcontent" role="tab" data-toggle="tab">Full Metadata</a></li>
+              </ul>
 
-              <h4>Full metadata file</h4>
-              <p>These files contain the metadata used by SRA-Explorer for downstream use. Note that each SRA record is repeated for every ENA FastQ entry.</p>
-              <div class="panel panel-default">
-                <div class="panel-heading" role="tab">
-                  <h4 class="panel-title">
-                    <a role="button" data-toggle="collapse" data-parent="#savedDatasetsAccordion" href="#fullTSV">TSV</a>
-                  </h4>
-                </div>
-                <div id="fullTSV" class="panel-collapse collapse" role="tabpanel">
-                  <div class="panel-body">
-                    <p>The following is a TSV (tab separated values) file with all metadata fields for the selected samples.</p>
-                    <p>
-                      <button class="btn btn-sm btn-default btn-copy" data-clipboard-target="#fullTSV_content"><span class="glyphicon glyphicon-copy"></span> Copy</button>
-                      <button class="btn btn-sm btn-default btn-download" ng-click="download_contents('#fullTSV_content', 'sra_explorer_metadata.tsv')"><span class="glyphicon glyphicon-download-alt"></span> Download</button>
-                    </p>
-                    <p ng-show="savedResultsENAaccessions.length < savedResults.length" class="text-center"><span class="glyphicon glyphicon-refresh fa-spin"></span> Loading <span class="badge"><span ng-bind="savedResultsENAaccessions.length"></span> / <span ng-bind="savedResults.length"></span></span>..</p>
-                    <pre ng-show="savedResultsENAfastq.length > 0" id="fullTSV_content"><code>Accession{{ tabChr }}Title{{ tabChr }}Platform{{ tabChr }}Total bases{{ tabChr }}Create date{{ tabChr }}SRA URL{{ tabChr }}SRA filename{{ tabChr }}SRA nice filename{{ tabChr }}FastQ URL{{ tabChr }}FastQ Aspera URL{{ tabChr }}FastQ filename{{ tabChr }}FastQ nice filename</code><code ng-repeat="x in savedResultsENAfastq">{{ nlChr }}{{ x.accession }}{{ tabChr }}{{ x.title }}{{ tabChr }}{{ x.platform }}{{ tabChr }}{{ x.total_bases }}{{ tabChr }}{{ x.createdate }}{{ tabChr }}{{ x.sra_url }}{{ tabChr }}{{ x.accession }}.sra{{ tabChr }}{{ x.sra_niceFilename }}{{ tabChr }}{{ x.fastq_url }}{{ tabChr }}{{ x.fastq_asperaurl }}{{ tabChr }}{{ x.fastq_filename }}{{ tabChr }}{{ x.fastq_niceFilename }}</code></pre>
-                  </div>
-                </div>
-              </div>
+              <div class="tab-content">
+                <div role="tabpanel" class="tab-pane fade in active" id="fastq_tabcontent">
+                  <div ng-show="savedResults.length > 0" class="panel-group" id="fastqAccordion" role="tablist" aria-multiselectable="true">
+                    <p><br>To download FastQ files directly, sra-explorer queries the <a href="https://www.ebi.ac.uk/ena" target="_blank" rel="nofollow">ENA</a> for each SRA run accession number.</p>
 
-              <div class="panel panel-default">
-                <div class="panel-heading" role="tab">
-                  <h4 class="panel-title">
-                    <a role="button" data-toggle="collapse" data-parent="#savedDatasetsAccordion" href="#fullJSON">JSON</a>
-                  </h4>
-                </div>
-                <div id="fullJSON" class="panel-collapse collapse" role="tabpanel">
-                  <div class="panel-body">
-                    <p>The following is a JSON file with all metadata fields for the selected samples.</p>
-                    <p>
-                      <button class="btn btn-sm btn-default btn-copy" data-clipboard-target="#fullJSON_content"><span class="glyphicon glyphicon-copy"></span> Copy</button>
-                      <button class="btn btn-sm btn-default btn-download" ng-click="download_contents('#fullJSON_content', 'sra_explorer_metadata.json')"><span class="glyphicon glyphicon-download-alt"></span> Download</button>
-                    </p>
-                    <p ng-show="savedResultsENAaccessions.length < savedResults.length" class="text-center"><span class="glyphicon glyphicon-refresh fa-spin"></span> Loading <span class="badge"><span ng-bind="savedResultsENAaccessions.length"></span> / <span ng-bind="savedResults.length"></span></span>..</p>
-                    <pre ng-show="savedResultsENAfastq.length > 0" id="fullJSON_content"><code>{{ savedResultsENAfastq | json }}</code></pre>
-                  </div>
-                </div>
-              </div>
-
-              <div class="panel panel-default">
-                <div class="panel-heading" role="tab">
-                  <h4 class="panel-title">
-                    <a role="button" data-toggle="collapse" data-parent="#savedDatasetsAccordion" href="#fullYAML">YAML</a>
-                  </h4>
-                </div>
-                <div id="fullYAML" class="panel-collapse collapse" role="tabpanel">
-                  <div class="panel-body">
-                    <p>The following is a YAML file with all metadata fields for the selected samples.</p>
-                    <p>
-                      <button class="btn btn-sm btn-default btn-copy" data-clipboard-target="#fullYAML_content"><span class="glyphicon glyphicon-copy"></span> Copy</button>
-                      <button class="btn btn-sm btn-default btn-download" ng-click="download_contents('#fullYAML_content', 'sra_explorer_metadata.yaml')"><span class="glyphicon glyphicon-download-alt"></span> Download</button>
-                    </p>
-                    <p ng-show="savedResultsENAaccessions.length < savedResults.length" class="text-center"><span class="glyphicon glyphicon-refresh fa-spin"></span> Loading <span class="badge"><span ng-bind="savedResultsENAaccessions.length"></span> / <span ng-bind="savedResults.length"></span></span>..</p>
-                    <pre ng-show="savedResultsENAfastq.length > 0" id="fullYAML_content"><code>{{ savedResultsENAfastqYAML }}</code></pre>
-                  </div>
-                </div>
-              </div>
-
-              <hr>
-
-              <h4>FastQ downloads</h4>
-              <p>To download FastQ files directly, sra-explorer queries the <a href="https://www.ebi.ac.uk/ena" target="_blank" rel="nofollow">ENA</a> for each SRA run accession number.</p>
-
-              <div class="panel panel-default">
-                <div class="panel-heading" role="tab">
-                  <h4 class="panel-title">
-                    <a role="button" data-toggle="collapse" data-parent="#savedDatasetsAccordion" href="#fastqURLs">Raw FastQ Download URLs</a>
-                  </h4>
-                </div>
-                <div id="fastqURLs" class="panel-collapse collapse" role="tabpanel">
-                  <div class="panel-body">
-                    <p>The following is a list of links to download the selected SRA runs as FastQ from the ENA.</p>
-                    <p>
-                      <button class="btn btn-sm btn-default btn-copy" data-clipboard-target="#fastqURLs_content"><span class="glyphicon glyphicon-copy"></span> Copy</button>
-                      <button class="btn btn-sm btn-default btn-download" ng-click="download_contents('#fastqURLs_content', 'sra_explorer_fastq_urls.txt')"><span class="glyphicon glyphicon-download-alt"></span> Download</button>
-                    </p>
-                    <p ng-show="savedResultsENAaccessions.length < savedResults.length" class="text-center"><span class="glyphicon glyphicon-refresh fa-spin"></span> Loading <span class="badge"><span ng-bind="savedResultsENAaccessions.length"></span> / <span ng-bind="savedResults.length"></span></span>..</p>
-                    <pre ng-show="savedResultsENAfastq.length > 0" id="fastqURLs_content"><code ng-repeat="x in savedResultsENAfastq">{{ x.fastq_url }}{{ nlChr }}</code></pre>
-                  </div>
-                </div>
-              </div>
-
-              <div class="panel panel-default">
-                <div class="panel-heading" role="tab">
-                  <h4 class="panel-title">
-                    <a role="button" data-toggle="collapse" data-parent="#savedDatasetsAccordion" href="#fastqURLs_bashCURL">Bash script for downloading FastQ files</a>
-                  </h4>
-                </div>
-                <div id="fastqURLs_bashCURL" class="panel-collapse collapse" role="tabpanel">
-                  <div class="panel-body">
-                    <p>This list of bash <code>curl</code> commands to download each SRA run FastQ file from the ENA, and save with a nicer filename, with the cleaned dataset title appended.</p>
-                    <p>
-                      <button class="btn btn-sm btn-default btn-copy" data-clipboard-target="#fastqURLs_bashCURL_content"><span class="glyphicon glyphicon-copy"></span> Copy</button>
-                      <button class="btn btn-sm btn-default btn-download" ng-click="download_contents('#fastqURLs_bashCURL_content', 'sra_explorer_fastq_download.sh')"><span class="glyphicon glyphicon-download-alt"></span> Download</button>
-                    </p>
-                    <p ng-show="savedResultsENAaccessions.length < savedResults.length" class="text-center"><span class="glyphicon glyphicon-refresh fa-spin"></span> Loading <span class="badge"><span ng-bind="savedResultsENAaccessions.length"></span> / <span ng-bind="savedResults.length"></span></span>..</p>
-                    <pre ng-show="savedResultsENAfastq.length > 0" id="fastqURLs_bashCURL_content"><code>#!/usr/bin/env bash</code><code ng-repeat="x in savedResultsENAfastq">{{ nlChr }}curl -L {{ x.fastq_url }} -o {{ x.fastq_niceFilename }}</code></pre>
-                  </div>
-                </div>
-              </div>
-
-              <div class="panel panel-default">
-                <div class="panel-heading" role="tab">
-                  <h4 class="panel-title">
-                    <a role="button" data-toggle="collapse" data-parent="#savedDatasetsAccordion" href="#fastqURLs_aspera">Aspera commands for downloading FastQ files</a>
-                  </h4>
-                </div>
-                <div id="fastqURLs_aspera" class="panel-collapse collapse" role="tabpanel">
-                  <div class="panel-body">
-                    <p>This list of bash <code>ascp</code> commands to download each FastQ file from the ENA using the <a href="https://downloads.asperasoft.com/en/downloads/8?list" target="_blank" rel="nofollow">Aspera download tool</a>.</p>
-                    <form class="form-horizontal">
-                      <div class="form-group">
-                        <label for="inputEmail3" class="col-sm-2 control-label">ascp openssh key path</label>
-                        <div class="col-sm-10">
-                          <div class="input-group">
-                            <input type="text" class="form-control" id="ascp_openssh_location" ng-model="ascp_openssh_location">
-                            <span class="input-group-btn">
-                              <button class="btn btn-default" type="button" ng-click="set_ascp_openssh_location('linux')"><i class="fa fa-linux" aria-hidden="true"></i> Linux</button>
-                              <button class="btn btn-default" type="button" ng-click="set_ascp_openssh_location('osx')"><i class="fa fa-apple" aria-hidden="true"></i> OSX</button>
-                            </span>
-                          </div>
-                        </div>
+                    <div class="panel panel-default">
+                      <div class="panel-heading" role="tab">
+                        <h4 class="panel-title">
+                          <a role="button" data-toggle="collapse" data-parent="#fastqAccordion" href="#fastqURLs">Raw FastQ Download URLs</a>
+                        </h4>
                       </div>
-                      <div class="form-group">
-                        <label for="inputEmail3" class="col-sm-2 control-label">Rename files?</label>
-                        <div class="col-sm-10">
-                          <label class="radio-inline">
-                            <input type="radio" ng-model="ascp_append_mv" ng-value="true"> Append <code>mv</code> command to rename downloaded files
-                          </label>
-                          <label class="radio-inline">
-                            <input type="radio" ng-model="ascp_append_mv" ng-value="false"> Don't rename files
-                          </label>
-                        </div>
-                      </div>
-                    </form>
-                    <p>
-                      <button class="btn btn-sm btn-default btn-copy" data-clipboard-target="#fastqURLs_aspera_content"><span class="glyphicon glyphicon-copy"></span> Copy</button>
-                      <button class="btn btn-sm btn-default btn-download" ng-click="download_contents('#fastqURLs_aspera_content', 'sra_explorer_fastq_aspera_download.sh')"><span class="glyphicon glyphicon-download-alt"></span> Download</button>
-                    </p>
-                    <p ng-show="savedResultsENAaccessions.length < savedResults.length" class="text-center"><span class="glyphicon glyphicon-refresh fa-spin"></span> Loading <span class="badge"><span ng-bind="savedResultsENAaccessions.length"></span> / <span ng-bind="savedResults.length"></span></span>..</p>
-                    <pre ng-show="savedResultsENAfastq.length > 0" id="fastqURLs_aspera_content"><code>#!/usr/bin/env bash</code><code ng-repeat="x in savedResultsENAfastq">{{ nlChr }}ascp -QT -l 300m -P33001 -i {{ ascp_openssh_location }} {{ x.fastq_asperaurl }} .<span ng-show="ascp_append_mv"> && mv {{ x.fastq_filename }} {{ x.fastq_niceFilename }}</span></code></pre>
-                  </div>
-                </div>
-              </div>
-
-              <div class="panel panel-default">
-                <div class="panel-heading" role="tab">
-                  <h4 class="panel-title">
-                    <a role="button" data-toggle="collapse" data-parent="#savedDatasetsAccordion" href="#fastqURLs_niceNames">Cluster Flow FastQ download file (nice filenames)</a>
-                  </h4>
-                </div>
-                <div id="fastqURLs_niceNames" class="panel-collapse collapse" role="tabpanel">
-                  <div class="panel-body">
-                    <p>This list of URLs is followed by a nicer filename, with the cleaned dataset title appended. This is suitable for use with the <a href="http://clusterflow.io" target="_blank">Cluster Flow</a> <code>--file_list</code> download option.</p>
-                    <p>
-                      <button class="btn btn-sm btn-default btn-copy" data-clipboard-target="#fastqURLs_niceNames_content"><span class="glyphicon glyphicon-copy"></span> Copy</button>
-                      <button class="btn btn-sm btn-default btn-download" ng-click="download_contents('#fastqURLs_niceNames_content', 'sra_explorer_fastq_nicenames.txt')"><span class="glyphicon glyphicon-download-alt"></span> Download</button>
-                    </p>
-                    <p ng-show="savedResultsENAaccessions.length < savedResults.length" class="text-center"><span class="glyphicon glyphicon-refresh fa-spin"></span> Loading <span class="badge"><span ng-bind="savedResultsENAaccessions.length"></span> / <span ng-bind="savedResults.length"></span></span>..</p>
-                    <pre ng-show="savedResultsENAfastq.length > 0" id="fastqURLs_niceNames_content"><code ng-repeat="x in savedResultsENAfastq">{{ x.fastq_url }}{{ tabChr }}{{ x.fastq_niceFilename }}{{ nlChr }}</code></pre>
-                  </div>
-                </div>
-              </div>
-
-              <div class="panel panel-default">
-                <div class="panel-heading" role="tab">
-                  <h4 class="panel-title">
-                    <a role="button" data-toggle="collapse" data-parent="#savedDatasetsAccordion" href="#fastqURLs_bcbio">bcbio project file for FastQ downloads (nice filenames)</a>
-                  </h4>
-                </div>
-                <div id="fastqURLs_bcbio" class="panel-collapse collapse" role="tabpanel">
-                  <div class="panel-body">
-                    <p>This list of URLs is followed by a nicer filename. This is suitable for use with <a href="https://bcbio-nextgen.readthedocs.io/en/latest/" target="_blank">bcbio-nextgen</a> analysis pipelines.</p>
-                    <p>
-                      <button class="btn btn-sm btn-default btn-copy" data-clipboard-target="#fastqURLs_bcbio_content"><span class="glyphicon glyphicon-copy"></span> Copy</button>
-                      <button class="btn btn-sm btn-default btn-download" ng-click="download_contents('#fastqURLs_bcbio_content', 'sra_explorer_bcbio.txt')"><span class="glyphicon glyphicon-download-alt"></span> Download</button>
-                    </p>
-                    <p ng-show="savedResultsENAaccessions.length < savedResults.length" class="text-center"><span class="glyphicon glyphicon-refresh fa-spin"></span> Loading <span class="badge"><span ng-bind="savedResultsENAaccessions.length"></span> / <span ng-bind="savedResults.length"></span></span>..</p>
-                    <pre ng-show="savedResultsENAfastq.length > 0" id="fastqURLs_bcbio_content"><code>samplename,description</code><code ng-repeat="x in savedResultsENAfastq">{{ nlChr }}{{ x.fastq_url }},{{ x.fastq_niceFilename }}</code></pre>
-                  </div>
-                </div>
-              </div>
-
-              <hr>
-
-              <h4>SRA downloads</h4>
-              <p>These download links are automatically generated based on the URL schema of the NCBI SRA.</p>
-
-              <div class="panel panel-default">
-                <div class="panel-heading" role="tab">
-                  <h4 class="panel-title">
-                    <a role="button" data-toggle="collapse" data-parent="#savedDatasetsAccordion" href="#ftpURLs">Raw SRA Download URLs</a>
-                  </h4>
-                </div>
-                <div id="ftpURLs" class="panel-collapse collapse" role="tabpanel">
-                  <div class="panel-body">
-                    <p>The following is a list of links to download the selected SRA files.</p>
-                    <p>
-                      <button class="btn btn-sm btn-default btn-copy" data-clipboard-target="#ftpURLs_content"><span class="glyphicon glyphicon-copy"></span> Copy</button>
-                      <button class="btn btn-sm btn-default btn-download" ng-click="download_contents('#ftpURLs_content', 'sra_explorer_sra_urls.txt')"><span class="glyphicon glyphicon-download-alt"></span> Download</button>
-                    </p>
-                    <pre id="ftpURLs_content"><code ng-repeat="x in savedResults">{{ x.sra_url }}{{ nlChr }}</code></pre>
-                  </div>
-                </div>
-              </div>
-
-              <div class="panel panel-default">
-                  <div class="panel-heading" role="tab">
-                      <h4 class="panel-title">
-                          <a role="button" data-toggle="collapse" data-parent="#savedDatasetsAccordion" href="#ftpURLs_bashCURL">
-                              Bash script for downloading SRA files (nice filenames)
-                          </a>
-                      </h4>
-                  </div>
-                  <div id="ftpURLs_bashCURL" class="panel-collapse collapse" role="tabpanel">
-                      <div class="panel-body">
-                          <p>This list of bash <code>curl</code> commands to download each SRA file and save with a nicer filename, with the cleaned dataset title appended.</p>
+                      <div id="fastqURLs" class="panel-collapse collapse" role="tabpanel">
+                        <div class="panel-body">
+                          <p>The following is a list of links to download the selected SRA runs as FastQ from the ENA.</p>
                           <p>
-                              <button class="btn btn-sm btn-default btn-copy" data-clipboard-target="#ftpURLs_bashCURL_content"><span class="glyphicon glyphicon-copy"></span> Copy</button>
-                              <button class="btn btn-sm btn-default btn-download" ng-click="download_contents('#ftpURLs_bashCURL_content', 'sra_explorer_sra_download.sh')"><span class="glyphicon glyphicon-download-alt"></span> Download</button>
+                            <button class="btn btn-sm btn-default btn-copy" data-clipboard-target="#fastqURLs_content"><span class="glyphicon glyphicon-copy"></span> Copy</button>
+                            <button class="btn btn-sm btn-default btn-download" ng-click="download_contents('#fastqURLs_content', 'sra_explorer_fastq_urls.txt')"><span class="glyphicon glyphicon-download-alt"></span> Download</button>
                           </p>
-                          <pre id="ftpURLs_bashCURL_content"><code>#!/usr/bin/env bash</code><code ng-repeat="x in savedResults">{{ nlChr }}curl -L {{ x.sra_url }} -o {{ x.sra_niceFilename }}</code></pre>
+                          <p ng-show="savedResultsENAaccessions.length < savedResults.length" class="text-center"><span class="glyphicon glyphicon-refresh fa-spin"></span> Loading <span class="badge"><span ng-bind="savedResultsENAaccessions.length"></span> / <span ng-bind="savedResults.length"></span></span>..</p>
+                          <pre ng-show="savedResultsENAfastq.length > 0" id="fastqURLs_content"><code ng-repeat="x in savedResultsENAfastq">{{ x.fastq_url }}{{ nlChr }}</code></pre>
+                        </div>
                       </div>
-                  </div>
-              </div>
+                    </div>
 
-              <div class="panel panel-default">
-                  <div class="panel-heading" role="tab">
-                      <h4 class="panel-title">
-                          <a role="button" data-toggle="collapse" data-parent="#savedDatasetsAccordion" href="#ftpURLs_niceNames">
-                              Cluster Flow SRA download file (nice filename)
-                          </a>
-                      </h4>
-                  </div>
-                  <div id="ftpURLs_niceNames" class="panel-collapse collapse" role="tabpanel">
-                      <div class="panel-body">
+                    <div class="panel panel-default">
+                      <div class="panel-heading" role="tab">
+                        <h4 class="panel-title">
+                          <a role="button" data-toggle="collapse" data-parent="#fastqAccordion" href="#fastqURLs_bashCURL">Bash script for downloading FastQ files</a>
+                        </h4>
+                      </div>
+                      <div id="fastqURLs_bashCURL" class="panel-collapse collapse" role="tabpanel">
+                        <div class="panel-body">
+                          <p>This list of bash <code>curl</code> commands to download each SRA run FastQ file from the ENA, and save with a nicer filename, with the cleaned dataset title appended.</p>
+                          <p>
+                            <button class="btn btn-sm btn-default btn-copy" data-clipboard-target="#fastqURLs_bashCURL_content"><span class="glyphicon glyphicon-copy"></span> Copy</button>
+                            <button class="btn btn-sm btn-default btn-download" ng-click="download_contents('#fastqURLs_bashCURL_content', 'sra_explorer_fastq_download.sh')"><span class="glyphicon glyphicon-download-alt"></span> Download</button>
+                          </p>
+                          <p ng-show="savedResultsENAaccessions.length < savedResults.length" class="text-center"><span class="glyphicon glyphicon-refresh fa-spin"></span> Loading <span class="badge"><span ng-bind="savedResultsENAaccessions.length"></span> / <span ng-bind="savedResults.length"></span></span>..</p>
+                          <pre ng-show="savedResultsENAfastq.length > 0" id="fastqURLs_bashCURL_content"><code>#!/usr/bin/env bash</code><code ng-repeat="x in savedResultsENAfastq">{{ nlChr }}curl -L {{ x.fastq_url }} -o {{ x.fastq_niceFilename }}</code></pre>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="panel panel-default">
+                      <div class="panel-heading" role="tab">
+                        <h4 class="panel-title">
+                          <a role="button" data-toggle="collapse" data-parent="#fastqAccordion" href="#fastqURLs_aspera">Aspera commands for downloading FastQ files</a>
+                        </h4>
+                      </div>
+                      <div id="fastqURLs_aspera" class="panel-collapse collapse" role="tabpanel">
+                        <div class="panel-body">
+                          <p>This list of bash <code>ascp</code> commands to download each FastQ file from the ENA using the <a href="https://downloads.asperasoft.com/en/downloads/8?list" target="_blank" rel="nofollow">Aspera download tool</a>.</p>
+                          <form class="form-horizontal">
+                            <div class="form-group">
+                              <label for="inputEmail3" class="col-sm-2 control-label">ascp openssh key path</label>
+                              <div class="col-sm-10">
+                                <div class="input-group">
+                                  <input type="text" class="form-control" id="ascp_openssh_location" ng-model="ascp_openssh_location">
+                                  <span class="input-group-btn">
+                                    <button class="btn btn-default" type="button" ng-click="set_ascp_openssh_location('linux')"><i class="fa fa-linux" aria-hidden="true"></i> Linux</button>
+                                    <button class="btn btn-default" type="button" ng-click="set_ascp_openssh_location('osx')"><i class="fa fa-apple" aria-hidden="true"></i> OSX</button>
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="form-group">
+                              <label for="inputEmail3" class="col-sm-2 control-label">Rename files?</label>
+                              <div class="col-sm-10">
+                                <label class="radio-inline">
+                                  <input type="radio" ng-model="ascp_append_mv" ng-value="true"> Append <code>mv</code> command to rename downloaded files
+                                </label>
+                                <label class="radio-inline">
+                                  <input type="radio" ng-model="ascp_append_mv" ng-value="false"> Don't rename files
+                                </label>
+                              </div>
+                            </div>
+                          </form>
+                          <p>
+                            <button class="btn btn-sm btn-default btn-copy" data-clipboard-target="#fastqURLs_aspera_content"><span class="glyphicon glyphicon-copy"></span> Copy</button>
+                            <button class="btn btn-sm btn-default btn-download" ng-click="download_contents('#fastqURLs_aspera_content', 'sra_explorer_fastq_aspera_download.sh')"><span class="glyphicon glyphicon-download-alt"></span> Download</button>
+                          </p>
+                          <p ng-show="savedResultsENAaccessions.length < savedResults.length" class="text-center"><span class="glyphicon glyphicon-refresh fa-spin"></span> Loading <span class="badge"><span ng-bind="savedResultsENAaccessions.length"></span> / <span ng-bind="savedResults.length"></span></span>..</p>
+                          <pre ng-show="savedResultsENAfastq.length > 0" id="fastqURLs_aspera_content"><code>#!/usr/bin/env bash</code><code ng-repeat="x in savedResultsENAfastq">{{ nlChr }}ascp -QT -l 300m -P33001 -i {{ ascp_openssh_location }} {{ x.fastq_asperaurl }} .<span ng-show="ascp_append_mv"> && mv {{ x.fastq_filename }} {{ x.fastq_niceFilename }}</span></code></pre>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="panel panel-default">
+                      <div class="panel-heading" role="tab">
+                        <h4 class="panel-title">
+                          <a role="button" data-toggle="collapse" data-parent="#fastqAccordion" href="#fastqURLs_niceNames">Cluster Flow FastQ download file (nice filenames)</a>
+                        </h4>
+                      </div>
+                      <div id="fastqURLs_niceNames" class="panel-collapse collapse" role="tabpanel">
+                        <div class="panel-body">
                           <p>This list of URLs is followed by a nicer filename, with the cleaned dataset title appended. This is suitable for use with the <a href="http://clusterflow.io" target="_blank">Cluster Flow</a> <code>--file_list</code> download option.</p>
                           <p>
-                              <button class="btn btn-sm btn-default btn-copy" data-clipboard-target="#ftpURLs_niceNames_content"><span class="glyphicon glyphicon-copy"></span> Copy</button>
-                              <button class="btn btn-sm btn-default btn-download" ng-click="download_contents('#ftpURLs_niceNames_content', 'sra_explorer_sra_nicenames.txt')"><span class="glyphicon glyphicon-download-alt"></span> Download</button>
+                            <button class="btn btn-sm btn-default btn-copy" data-clipboard-target="#fastqURLs_niceNames_content"><span class="glyphicon glyphicon-copy"></span> Copy</button>
+                            <button class="btn btn-sm btn-default btn-download" ng-click="download_contents('#fastqURLs_niceNames_content', 'sra_explorer_fastq_nicenames.txt')"><span class="glyphicon glyphicon-download-alt"></span> Download</button>
                           </p>
-                          <pre id="ftpURLs_niceNames_content"><code ng-repeat="x in savedResults">{{ x.sra_url }}{{ tabChr }}{{ x.sra_niceFilename }}{{ nlChr }}</code></pre>
+                          <p ng-show="savedResultsENAaccessions.length < savedResults.length" class="text-center"><span class="glyphicon glyphicon-refresh fa-spin"></span> Loading <span class="badge"><span ng-bind="savedResultsENAaccessions.length"></span> / <span ng-bind="savedResults.length"></span></span>..</p>
+                          <pre ng-show="savedResultsENAfastq.length > 0" id="fastqURLs_niceNames_content"><code ng-repeat="x in savedResultsENAfastq">{{ x.fastq_url }}{{ tabChr }}{{ x.fastq_niceFilename }}{{ nlChr }}</code></pre>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="panel panel-default">
+                      <div class="panel-heading" role="tab">
+                        <h4 class="panel-title">
+                          <a role="button" data-toggle="collapse" data-parent="#fastqAccordion" href="#fastqURLs_bcbio">bcbio project file for FastQ downloads (nice filenames)</a>
+                        </h4>
+                      </div>
+                      <div id="fastqURLs_bcbio" class="panel-collapse collapse" role="tabpanel">
+                        <div class="panel-body">
+                          <p>This list of URLs is followed by a nicer filename. This is suitable for use with <a href="https://bcbio-nextgen.readthedocs.io/en/latest/" target="_blank">bcbio-nextgen</a> analysis pipelines.</p>
+                          <p>
+                            <button class="btn btn-sm btn-default btn-copy" data-clipboard-target="#fastqURLs_bcbio_content"><span class="glyphicon glyphicon-copy"></span> Copy</button>
+                            <button class="btn btn-sm btn-default btn-download" ng-click="download_contents('#fastqURLs_bcbio_content', 'sra_explorer_bcbio.txt')"><span class="glyphicon glyphicon-download-alt"></span> Download</button>
+                          </p>
+                          <p ng-show="savedResultsENAaccessions.length < savedResults.length" class="text-center"><span class="glyphicon glyphicon-refresh fa-spin"></span> Loading <span class="badge"><span ng-bind="savedResultsENAaccessions.length"></span> / <span ng-bind="savedResults.length"></span></span>..</p>
+                          <pre ng-show="savedResultsENAfastq.length > 0" id="fastqURLs_bcbio_content"><code>samplename,description</code><code ng-repeat="x in savedResultsENAfastq">{{ nlChr }}{{ x.fastq_url }},{{ x.fastq_niceFilename }}</code></pre>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div role="tabpanel" class="tab-pane fade" id="sra_tabcontent">
+                  <div ng-show="savedResults.length > 0" class="panel-group" id="sraAccordion" role="tablist" aria-multiselectable="true">
+                    <p><br>These download links are automatically generated based on the URL schema of the NCBI SRA.</p>
+
+                    <div class="panel panel-default">
+                      <div class="panel-heading" role="tab">
+                        <h4 class="panel-title">
+                          <a role="button" data-toggle="collapse" data-parent="#sraAccordion" href="#ftpURLs">Raw SRA Download URLs</a>
+                        </h4>
+                      </div>
+                      <div id="ftpURLs" class="panel-collapse collapse" role="tabpanel">
+                        <div class="panel-body">
+                          <p>The following is a list of links to download the selected SRA files.</p>
+                          <p>
+                            <button class="btn btn-sm btn-default btn-copy" data-clipboard-target="#ftpURLs_content"><span class="glyphicon glyphicon-copy"></span> Copy</button>
+                            <button class="btn btn-sm btn-default btn-download" ng-click="download_contents('#ftpURLs_content', 'sra_explorer_sra_urls.txt')"><span class="glyphicon glyphicon-download-alt"></span> Download</button>
+                          </p>
+                          <pre id="ftpURLs_content"><code ng-repeat="x in savedResults">{{ x.sra_url }}{{ nlChr }}</code></pre>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="panel panel-default">
+                        <div class="panel-heading" role="tab">
+                            <h4 class="panel-title">
+                                <a role="button" data-toggle="collapse" data-parent="#sraAccordion" href="#ftpURLs_bashCURL">
+                                    Bash script for downloading SRA files (nice filenames)
+                                </a>
+                            </h4>
+                        </div>
+                        <div id="ftpURLs_bashCURL" class="panel-collapse collapse" role="tabpanel">
+                            <div class="panel-body">
+                                <p>This list of bash <code>curl</code> commands to download each SRA file and save with a nicer filename, with the cleaned dataset title appended.</p>
+                                <p>
+                                    <button class="btn btn-sm btn-default btn-copy" data-clipboard-target="#ftpURLs_bashCURL_content"><span class="glyphicon glyphicon-copy"></span> Copy</button>
+                                    <button class="btn btn-sm btn-default btn-download" ng-click="download_contents('#ftpURLs_bashCURL_content', 'sra_explorer_sra_download.sh')"><span class="glyphicon glyphicon-download-alt"></span> Download</button>
+                                </p>
+                                <pre id="ftpURLs_bashCURL_content"><code>#!/usr/bin/env bash</code><code ng-repeat="x in savedResults">{{ nlChr }}curl -L {{ x.sra_url }} -o {{ x.sra_niceFilename }}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="panel panel-default">
+                        <div class="panel-heading" role="tab">
+                            <h4 class="panel-title">
+                                <a role="button" data-toggle="collapse" data-parent="#sraAccordion" href="#ftpURLs_niceNames">
+                                    Cluster Flow SRA download file (nice filename)
+                                </a>
+                            </h4>
+                        </div>
+                        <div id="ftpURLs_niceNames" class="panel-collapse collapse" role="tabpanel">
+                            <div class="panel-body">
+                                <p>This list of URLs is followed by a nicer filename, with the cleaned dataset title appended. This is suitable for use with the <a href="http://clusterflow.io" target="_blank">Cluster Flow</a> <code>--file_list</code> download option.</p>
+                                <p>
+                                    <button class="btn btn-sm btn-default btn-copy" data-clipboard-target="#ftpURLs_niceNames_content"><span class="glyphicon glyphicon-copy"></span> Copy</button>
+                                    <button class="btn btn-sm btn-default btn-download" ng-click="download_contents('#ftpURLs_niceNames_content', 'sra_explorer_sra_nicenames.txt')"><span class="glyphicon glyphicon-download-alt"></span> Download</button>
+                                </p>
+                                <pre id="ftpURLs_niceNames_content"><code ng-repeat="x in savedResults">{{ x.sra_url }}{{ tabChr }}{{ x.sra_niceFilename }}{{ nlChr }}</code></pre>
+                            </div>
+                        </div>
                       </div>
                   </div>
-              </div>
-            </div>
+                </div>
+                <div role="tabpanel" class="tab-pane fade" id="full_metadata_tabcontent">
 
+                  <div ng-show="savedResults.length > 0" class="panel-group" id="fullMetaAccordion" role="tablist" aria-multiselectable="true">
+
+                    <p><br>These files contain the metadata used by SRA-Explorer for downstream use. Note that each SRA record is repeated for every ENA FastQ entry.</p>
+                    <div class="panel panel-default">
+                      <div class="panel-heading" role="tab">
+                        <h4 class="panel-title">
+                          <a role="button" data-toggle="collapse" data-parent="#fullMetaAccordion" href="#fullTSV">TSV</a>
+                        </h4>
+                      </div>
+                      <div id="fullTSV" class="panel-collapse collapse" role="tabpanel">
+                        <div class="panel-body">
+                          <p>The following is a TSV (tab separated values) file with all metadata fields for the selected samples.</p>
+                          <p>
+                            <button class="btn btn-sm btn-default btn-copy" data-clipboard-target="#fullTSV_content"><span class="glyphicon glyphicon-copy"></span> Copy</button>
+                            <button class="btn btn-sm btn-default btn-download" ng-click="download_contents('#fullTSV_content', 'sra_explorer_metadata.tsv')"><span class="glyphicon glyphicon-download-alt"></span> Download</button>
+                          </p>
+                          <p ng-show="savedResultsENAaccessions.length < savedResults.length" class="text-center"><span class="glyphicon glyphicon-refresh fa-spin"></span> Loading <span class="badge"><span ng-bind="savedResultsENAaccessions.length"></span> / <span ng-bind="savedResults.length"></span></span>..</p>
+                          <pre ng-show="savedResultsENAfastq.length > 0" id="fullTSV_content"><code>Accession{{ tabChr }}Title{{ tabChr }}Platform{{ tabChr }}Total bases{{ tabChr }}Create date{{ tabChr }}SRA URL{{ tabChr }}SRA filename{{ tabChr }}SRA nice filename{{ tabChr }}FastQ URL{{ tabChr }}FastQ Aspera URL{{ tabChr }}FastQ filename{{ tabChr }}FastQ nice filename</code><code ng-repeat="x in savedResultsENAfastq">{{ nlChr }}{{ x.accession }}{{ tabChr }}{{ x.title }}{{ tabChr }}{{ x.platform }}{{ tabChr }}{{ x.total_bases }}{{ tabChr }}{{ x.createdate }}{{ tabChr }}{{ x.sra_url }}{{ tabChr }}{{ x.accession }}.sra{{ tabChr }}{{ x.sra_niceFilename }}{{ tabChr }}{{ x.fastq_url }}{{ tabChr }}{{ x.fastq_asperaurl }}{{ tabChr }}{{ x.fastq_filename }}{{ tabChr }}{{ x.fastq_niceFilename }}</code></pre>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="panel panel-default">
+                      <div class="panel-heading" role="tab">
+                        <h4 class="panel-title">
+                          <a role="button" data-toggle="collapse" data-parent="#fullMetaAccordion" href="#fullJSON">JSON</a>
+                        </h4>
+                      </div>
+                      <div id="fullJSON" class="panel-collapse collapse" role="tabpanel">
+                        <div class="panel-body">
+                          <p>The following is a JSON file with all metadata fields for the selected samples.</p>
+                          <p>
+                            <button class="btn btn-sm btn-default btn-copy" data-clipboard-target="#fullJSON_content"><span class="glyphicon glyphicon-copy"></span> Copy</button>
+                            <button class="btn btn-sm btn-default btn-download" ng-click="download_contents('#fullJSON_content', 'sra_explorer_metadata.json')"><span class="glyphicon glyphicon-download-alt"></span> Download</button>
+                          </p>
+                          <p ng-show="savedResultsENAaccessions.length < savedResults.length" class="text-center"><span class="glyphicon glyphicon-refresh fa-spin"></span> Loading <span class="badge"><span ng-bind="savedResultsENAaccessions.length"></span> / <span ng-bind="savedResults.length"></span></span>..</p>
+                          <pre ng-show="savedResultsENAfastq.length > 0" id="fullJSON_content"><code>{{ savedResultsENAfastq | json }}</code></pre>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="panel panel-default">
+                      <div class="panel-heading" role="tab">
+                        <h4 class="panel-title">
+                          <a role="button" data-toggle="collapse" data-parent="#fullMetaAccordion" href="#fullYAML">YAML</a>
+                        </h4>
+                      </div>
+                      <div id="fullYAML" class="panel-collapse collapse" role="tabpanel">
+                        <div class="panel-body">
+                          <p>The following is a YAML file with all metadata fields for the selected samples.</p>
+                          <p>
+                            <button class="btn btn-sm btn-default btn-copy" data-clipboard-target="#fullYAML_content"><span class="glyphicon glyphicon-copy"></span> Copy</button>
+                            <button class="btn btn-sm btn-default btn-download" ng-click="download_contents('#fullYAML_content', 'sra_explorer_metadata.yaml')"><span class="glyphicon glyphicon-download-alt"></span> Download</button>
+                          </p>
+                          <p ng-show="savedResultsENAaccessions.length < savedResults.length" class="text-center"><span class="glyphicon glyphicon-refresh fa-spin"></span> Loading <span class="badge"><span ng-bind="savedResultsENAaccessions.length"></span> / <span ng-bind="savedResults.length"></span></span>..</p>
+                          <pre ng-show="savedResultsENAfastq.length > 0" id="fullYAML_content"><code>{{ savedResultsENAfastqYAML }}</code></pre>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
         </div>
 
         <p ng-show="summaryURL">Query URL = <code ng-bind="summaryURL"></code></p>

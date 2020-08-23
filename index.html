@@ -125,6 +125,7 @@
         </div>
 
         <p ng-show="loadingSpinner" class="text-center"><span class="glyphicon glyphicon-refresh fa-spin"></span> Loading..</p>
+        <div ng-show="errorMsgs.length" class="alert alert-danger"><p ng-repeat="x in errorMsgs">{{x}}</p></div>
 
         <div ng-show="results.length > 0">
             <hr>
@@ -505,6 +506,7 @@
             $scope.retstart = 0;
             $scope.summaryURL = 0;
             $scope.loadingSpinner = 0;
+            $scope.errorMsgs = [];
             $scope.sortType = '';
             $scope.results = [];
             $scope.savedResults = [];
@@ -523,8 +525,15 @@
             function searchSRA (string) {
                 $scope.showSaved = false;
                 $scope.loadingSpinner = 1;
+                $scope.errorMsgs = [];
                 $scope.results = [];
                 var searchURL = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=sra&usehistory=y&retmode=json&term='+string;
+                if(string.trim().length == 0){
+                    console.error("Search string cannot be empty");
+                    $scope.errorMsg = "Search string cannot be empty";
+                    return;
+                }
+                console.info("SRA Query: "+searchURL);
                 $http.get(searchURL).success(function(s_response) {
                     if(s_response.esearchresult.querytranslation){
                         $scope.searchText = s_response.esearchresult.querytranslation;
@@ -534,6 +543,7 @@
                     var retmax = $scope.maxResults;
                     var retstart = $scope.retstart;
                     var resultsURL = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=sra&retmode=json&query_key='+querykey+'&WebEnv='+webenv+'&retstart='+retstart+'&retmax='+retmax;
+                    https://trace.ncbi.nlm.nih.gov/Traces/sra/sra.cgi?save=efetch&db=sra&rettype=docsumcsv&term=GSE30567
                     $scope.summaryURL = resultsURL;
                     $http.get(resultsURL).success(function(response) {
                         $scope.loadingSpinner = 0;
@@ -550,12 +560,17 @@
                             }
 
                             // Runs
-                            runsXMLraw = '<document>'+$('<div/>').html(value.runs).text().trim()+'</document>';
+                            runsXMLraw = '<document>'+$('<div/>').html(value.runs).html().trim()+'</document>';
                             parser = new DOMParser();
-                            runsXML = parser.parseFromString(runsXMLraw,"text/xml");
+                            runsXML = parser.parseFromString(runsXMLraw, "text/xml");
                             runsJSON = xmlToJson(runsXML);
-                            if(runsJSON.document.Run){
-                                value.runs = runsJSON.document.Run;
+                            console.info("value.runs:", value.runs);
+                            console.info("html(value.runs):", $('<div/>').html(value.runs));
+                            console.info("html(value.runs).html():", $('<div/>').html(value.runs).html());
+                            console.info("runsXML:", runsXML);
+                            console.info("runsJSON:", runsJSON);
+                            if(runsJSON.document){
+                                value.runs = runsJSON.document;
                                 // If only one SRR, make it an array
                                 if(!Array.isArray(value.runs)){
                                     value.runs = [value.runs];
@@ -564,29 +579,31 @@
                                 for(var i = 0; i < value.runs.length; i++){
                                     // Add results to scope
                                     try {
-                                      var sra_cleanTitle = value.expxml.Title.text.replace(/[^a-z0-9\._\-]/gi, '_').replace(/_+/g, '_');
-                                      $scope.results.push({
-                                        'title': value.expxml.Title.text,
-                                        'accession': value.runs[i].attributes.acc,
-                                        'platform': value.expxml.Platform.attributes.instrument_model,
-                                        'total_bases': Math.round(value.runs[i].attributes.total_bases / 100000),
-                                        'createdate': Date.parse(value.createdate),
-                                        'cleanTitle': sra_cleanTitle,
-                                        'sra_url': "ftp://ftp-trace.ncbi.nlm.nih.gov/sra/sra-instant/reads/ByRun/sra/"+value.runs[i].attributes.acc.substring(0,3)+"/"+value.runs[i].attributes.acc.substring(0,6)+"/"+value.runs[i].attributes.acc+"/"+value.runs[i].attributes.acc+".sra",
-                                        'sra_niceFilename': value.runs[i].attributes.acc+'_'+sra_cleanTitle+'.sra'
-                                      });
+                                        var sra_cleanTitle = value.expxml.Title.text.replace(/[^a-z0-9\._\-]/gi, '_').replace(/_+/g, '_');
+                                        $scope.results.push({
+                                            'title': value.expxml.Title.text,
+                                            'accession': value.runs[i].attributes.acc,
+                                            'platform': value.expxml.Platform.attributes.instrument_model,
+                                            'total_bases': Math.round(value.runs[i].attributes.total_bases / 100000),
+                                            'createdate': Date.parse(value.createdate),
+                                            'cleanTitle': sra_cleanTitle,
+                                            'sra_url': "ftp://ftp-trace.ncbi.nlm.nih.gov/sra/sra-instant/reads/ByRun/sra/"+value.runs[i].attributes.acc.substring(0,3)+"/"+value.runs[i].attributes.acc.substring(0,6)+"/"+value.runs[i].attributes.acc+"/"+value.runs[i].attributes.acc+".sra",
+                                            'sra_niceFilename': value.runs[i].attributes.acc+'_'+sra_cleanTitle+'.sra'
+                                        });
                                     } catch(e){
-                                      console.log(e);
-                                      console.log({key: value});
+                                        console.error("Could not save SRA result!", {key: value});
+                                        console.error(e);
                                     }
                                 };
+                            } else {
+                                console.error("Could not parse runsJSON.document:", runsJSON.document);
+                                $scope.errorMsgs.push("Could not parse results from SRA API response: "+key);
                             }
-
-
 
                         });
 
-                        // console.log(response.result);
+                        console.log("Got "+Object.keys(response.result).length+" results");
+                        console.log($scope.results);
 
                     });
                 });

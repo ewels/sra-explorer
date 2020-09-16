@@ -547,7 +547,7 @@
                         // Parse the stupid embedded XML
                         angular.forEach(response.result, function(value, key) {
                             // Exp XML
-                            expXMLraw = '<document>'+$('<div/>').html(value.expxml).text().trim()+'</document>';
+                            expXMLraw = '<document>'+value.expxml+'</document>';
                             parser = new DOMParser();
                             expXML = parser.parseFromString(expXMLraw,"text/xml");
                             expJSON = xmlToJson(expXML);
@@ -557,7 +557,8 @@
                             }
 
                             // Runs
-                            runsXMLraw = '<document>'+$('<div/>').html(value.runs).text().trim()+'</document>';
+                            runsXMLraw = '<document>'+value.runs+'</document>';
+
                             parser = new DOMParser();
                             runsXML = parser.parseFromString(runsXMLraw,"text/xml");
                             runsJSON = xmlToJson(runsXML);
@@ -668,19 +669,17 @@
               if($scope.savedResultsENAaccessions.length < $scope.savedResults.length){
                 angular.forEach($scope.savedResults, function(value, key) {
                   if($scope.savedResultsENAaccessions.indexOf(value['accession']) === -1){
-                    var ENAsearchURL = 'https://www.ebi.ac.uk/ena/data/warehouse/filereport?result=read_run&fields=fastq_ftp&accession='+value['accession'];
+                    var ENAsearchURL = 'https://www.ebi.ac.uk/ena/portal/api/filereport?result=read_run&fields=fastq_ftp&format=JSON&accession='+value['accession'];
                     $http.get(ENAsearchURL).success(function(s_response) {
-                      var lines = s_response.split('\n');
-                      for(var i = 0; i < lines.length; i++){
-                        var urls = lines[i].split(';');
-                        for(var j = 0; j < urls.length; j++){
-                          if(urls[j].substr(0,3) == 'ftp'){
+                      for (var i = 0; i < s_response.length; i++) {
+                        var ftpFastQ = s_response[i]["fastq_ftp"]
+                        if (ftpFastQ != undefined) {
                             // Save the accession now that we have some download filenames, so we know that this worked
                             if($scope.savedResultsENAaccessions.indexOf(value['accession']) === -1){
                               $scope.savedResultsENAaccessions.push(value['accession']);
                             }
 
-                            var fname = urls[j].substring(urls[j].lastIndexOf('/')+1);
+                            var fname = ftpFastQ.substring(ftpFastQ.lastIndexOf('/')+1);
                             $scope.savedResultsENAfastq.push({
                               // Original SRA data
                               'title': value['title'],
@@ -692,14 +691,13 @@
                               'sra_url': value['sra_url'],
                               'sra_niceFilename': value['sra_niceFilename'],
                               // New FastQ fields
-                              'fastq_url': 'ftp://'+urls[j],
-                              'fastq_asperaurl': urls[j].replace('ftp.sra.ebi.ac.uk/', 'era-fasp@fasp.sra.ebi.ac.uk:'),
+                              'fastq_url': 'ftp://'+ftpFastQ,
+                              'fastq_asperaurl': ftpFastQ.replace('ftp.sra.ebi.ac.uk/', 'era-fasp@fasp.sra.ebi.ac.uk:'),
                               'fastq_filename': fname,
                               'fastq_niceFilename': value['accession']+'_'+value['cleanTitle']+fname.replace(value['accession'], '')
                             });
                             $scope.savedResultsENAfastqYAML = jsyaml.safeDump($scope.savedResultsENAfastq);
-                          }
-                        };
+                        }
                       }
                     });
                   }

@@ -665,14 +665,17 @@
                     var ENAsearchURL = 'https://www.ebi.ac.uk/ena/portal/api/filereport?result=read_run&fields=fastq_ftp&format=JSON&accession='+value['accession'];
                     $http.get(ENAsearchURL).success(function(s_response) {
                       for (var i = 0; i < s_response.length; i++) {
-                        var ftpFastQ = s_response[i]["fastq_ftp"]
+                        var ftpFastQ = s_response[i]["fastq_ftp"];
                         if (ftpFastQ != undefined) {
+                          // Paired-end FastQ files are given as a single result, need to split by ; character
+                          var ftpFastQ_urls = ftpFastQ.split(';');
+                          for(var j = 0; j < ftpFastQ_urls.length; j++){
                             // Save the accession now that we have some download filenames, so we know that this worked
                             if($scope.savedResultsENAaccessions.indexOf(value['accession']) === -1){
                               $scope.savedResultsENAaccessions.push(value['accession']);
                             }
 
-                            var fname = ftpFastQ.substring(ftpFastQ.lastIndexOf('/')+1);
+                            var fname = ftpFastQ_urls[j].substring(ftpFastQ_urls[j].lastIndexOf('/')+1);
                             $scope.savedResultsENAfastq.push({
                               // Original SRA data
                               'title': value['title'],
@@ -684,12 +687,13 @@
                               'sra_url': value['sra_url'],
                               'sra_niceFilename': value['sra_niceFilename'],
                               // New FastQ fields
-                              'fastq_url': 'ftp://'+ftpFastQ,
-                              'fastq_asperaurl': ftpFastQ.replace('ftp.sra.ebi.ac.uk/', 'era-fasp@fasp.sra.ebi.ac.uk:'),
+                              'fastq_url': 'ftp://'+ftpFastQ_urls[j],
+                              'fastq_asperaurl': ftpFastQ_urls[j].replace('ftp.sra.ebi.ac.uk/', 'era-fasp@fasp.sra.ebi.ac.uk:'),
                               'fastq_filename': fname,
                               'fastq_niceFilename': value['accession']+'_'+value['cleanTitle']+fname.replace(value['accession'], '')
                             });
                             $scope.savedResultsENAfastqYAML = jsyaml.safeDump($scope.savedResultsENAfastq);
+                          }
                         }
                       }
                     });

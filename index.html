@@ -688,7 +688,7 @@
                               'sra_niceFilename': value['sra_niceFilename'],
                               // New FastQ fields
                               'fastq_url': 'ftp://'+ftpFastQ_urls[j],
-                              'fastq_asperaurl': ftpFastQ_urls[j].replace('ftp.sra.ebi.ac.uk/', 'era-fasp@fasp.sra.ebi.ac.uk:'),
+                              'fastq_asperaurl': ftpFastQ_urls[j].replace('ftp.sra.ebi.ac.uk/', 'era-fasp@fasp.sra.ebi.ac.uk:').replace('ftp.ebi.ac.uk/', 'era-fasp@fasp.ebi.ac.uk:'),
                               'fastq_filename': fname,
                               'fastq_niceFilename': value['accession']+'_'+value['cleanTitle']+fname.replace(value['accession'], '')
                             });

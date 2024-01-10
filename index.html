@@ -59,6 +59,13 @@
           white-space: pre;
         }
 
+        /* Seqera Platform stuff */
+        #fullSeqeraPlatform_table_wrapper {
+          overflow: auto;
+          width: 100%;
+          max-height: 300px;
+        }
+
     </style>
 
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -415,6 +422,98 @@
                   <div ng-show="savedResults.length > 0" class="panel-group" id="fullMetaAccordion" role="tablist" aria-multiselectable="true">
 
                     <p><br>These files contain the metadata used by SRA-Explorer for downstream use. Note that each SRA record is repeated for every ENA FastQ entry.</p>
+
+                    <div class="panel panel-default">
+                      <div class="panel-heading" role="tab">
+                        <h4 class="panel-title">
+                          <a role="button" data-toggle="collapse" data-parent="#fullMetaAccordion" href="#seqera_platform">Seqera Platform (under development)</a>
+                        </h4>
+                      </div>
+                      <div id="seqera_platform" class="panel-collapse collapse" role="tabpanel">
+                        <div class="panel-body">
+                          <p>Send all metadata to Seqera Platform as a saved Dataset, which you can use as an input when launching pipelines.</p>
+                          <form id="seqera_platform_form" class="form-horizontal">
+                            <div class="form-group">
+                              <div class="col-sm-3">
+                                <label class="sr-only" for="sp_api_base">API Base URL</label>
+                                <input type="url" class="form-control" ng-model="seqeraplatform.api_base" id="sp_api_base" placeholder="API Base URL" value="https://api.tower.nf/" required>
+                              </div>
+                              <div class="col-sm-3">
+                                <label class="sr-only" for="sp_workspace_id">Workspace ID</label>
+                                <input type="number" class="form-control" ng-model="seqeraplatform.workspace_id" id="sp_workspace_id" placeholder="Workspace ID" required>
+                              </div>
+                              <div class="col-sm-3">
+                                <label class="sr-only" for="sp_access_token">Access Token</label>
+                                <input type="password" class="form-control" ng-model="seqeraplatform.access_token" id="sp_access_token" placeholder="Access Token" required>
+                              </div>
+                              <div class="col-sm-3">
+                                <div class="checkbox">
+                                  <label>
+                                    <input type="checkbox" ng-model="seqeraplatform.save_cookie" checked> Save in cookie
+                                  </label>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="form-group">
+                              <div class="col-sm-3">
+                                <label class="sr-only" for="sp_name">Dataset name</label>
+                                <input type="text" class="form-control" ng-model="seqeraplatform.name" id="sp_name" placeholder="Dataset name" required>
+                              </div>
+                              <div class="col-sm-6">
+                                <label class="sr-only" for="sp_description">Dataset description</label>
+                                <input type="text" class="form-control" ng-model="seqeraplatform.description" id="sp_description" placeholder="Dataset description">
+                              </div>
+                              <div class="col-sm-3">
+                                <button type="submit" class="btn btn-default btn-copy" ng-click="save_seqeraplatform(seqeraplatform)">
+                                  <span class="glyphicon glyphicon-send"></span> Add to Seqera Platform
+                                </button>
+                              </div>
+                            </div>
+                          </form>
+                          <div ng-show="seqeraPlatformMessages.length > 0" class="alert alert-info">
+                            <p ng-repeat="x in seqeraPlatformMessages">{{ x }}</p>
+                          </div>
+                          <p ng-show="savedResultsENAaccessions.length < savedResults.length" class="text-center"><span class="glyphicon glyphicon-refresh fa-spin"></span> Loading <span class="badge"><span ng-bind="savedResultsENAaccessions.length"></span> / <span ng-bind="savedResults.length"></span></span>..</p>
+                          <div id="fullSeqeraPlatform_table_wrapper">
+                            <table ng-show="savedResultsENAfastq.length > 0" id="fullSeqeraPlatform_content" class="table table-bordered table-hover table-condensed">
+                              <thead>
+                                <tr>
+                                  <th>Accession</th>
+                                  <th>Title</th>
+                                  <th>Platform</th>
+                                  <th>Total bases</th>
+                                  <th>Create date</th>
+                                  <th>SRA URL</th>
+                                  <th>SRA filename</th>
+                                  <th>SRA nice filename</th>
+                                  <th>FastQ URL</th>
+                                  <th>FastQ Aspera URL</th>
+                                  <th>FastQ filename</th>
+                                  <th>FastQ nice filename</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr ng-repeat="x in savedResultsENAfastq">
+                                  <td>{{ x.accession }}</td>
+                                  <td>{{ x.title }}</td>
+                                  <td>{{ x.platform }}</td>
+                                  <td>{{ x.total_bases }}</td>
+                                  <td>{{ x.createdate }}</td>
+                                  <td>{{ x.sra_url }}</td>
+                                  <td>{{ x.accession }}.sra</td>
+                                  <td>{{ x.sra_niceFilename }}</td>
+                                  <td>{{ x.fastq_url }}</td>
+                                  <td>{{ x.fastq_asperaurl }}</td>
+                                  <td>{{ x.fastq_filename }}</td>
+                                  <td>{{ x.fastq_niceFilename }}</td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
                     <div class="panel panel-default">
                       <div class="panel-heading" role="tab">
                         <h4 class="panel-title">
@@ -522,6 +621,15 @@
             $scope.nlChr = "\n";
             $scope.ascp_openssh_location = '$HOME/.aspera/connect/etc/asperaweb_id_dsa.openssh';
             $scope.ascp_append_mv = true;
+            $scope.seqeraplatform = {
+              'api_base': 'https://api.tower.nf/',
+              'workspace_id': '',
+              'access_token': '',
+              'save_cookie': true,
+              'name': '',
+              'description': ''
+            };
+            $scope.seqeraPlatformMessages = [];
 
             $scope.search  = function() { searchSRA($scope.searchText); };
 
@@ -724,6 +832,48 @@
                 var blob = new Blob([content], { type: "text/plain;charset=utf-8" });
                 saveAs(blob, filename);
             }
+
+            // Send metadata to Seqera Platform
+            $scope.save_seqeraplatform = function(sp) {
+              // First, create the new dataset
+              var api_url_create_dataset = sp.api_base+'/workspaces/'+sp.workspace_id+'/datasets';
+              var create_dataset_formData = {'name': sp.name, 'description': sp.description};
+              var headers = {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer "+sp.access_token
+              };
+              $http.post(
+                api_url_create_dataset,
+                JSON.stringify(create_dataset_formData),
+                {"headers": headers}
+              ).then(function successCallback(sp_response) {
+                $scope.seqeraPlatformMessages.push('Created dataset: '+sp_response.id);
+                console.log(sp_response);
+
+                // Now upload the data to the created dataset
+                var api_url_upload_dataset = sp.api_base+'/workspaces/'+sp.workspace_id+'/datasets/'+sp_response.id+'/upload?header=true';
+                headers["Content-Type"] = "multipart/form-data";
+                var upload_dataset_formData = new FormData();
+                var dataset_content = $("#fullTSV_content").text();
+                var dataset_blob = new Blob([dataset_content], { type: "text/plain;charset=utf-8" });
+                upload_dataset_formData.append('file', dataset_blob);
+                $http({
+                    url: api_url_upload_dataset,
+                    headers: headers,
+                    data: upload_dataset_formData,
+                    method: "POST"
+                }).then(function successCallback(sp_response) {
+                    $scope.seqeraPlatformMessages.push('Successfully uploaded metadata');
+                    console.log(sp_response);
+                }, function errorCallback(sp_response) {
+                    $scope.seqeraPlatformMessages.push('Error when uploading metadata (Error '+sp_response.status+')');
+                    $scope.seqeraPlatformMessages.push('<pre><code>'+JSON.stringify(sp_response.data)+'</code></pre>');
+                });
+              }, function errorCallback(sp_response) {
+                $scope.seqeraPlatformMessages.push('Error when creating dataset (Error '+sp_response.status+')');
+                $scope.seqeraPlatformMessages.push('<pre><code>'+JSON.stringify(sp_response.data)+'</code></pre>');
+              });
+            };
         });
 
         // Stolen frmo http://davidwalsh.name/convert-xml-json

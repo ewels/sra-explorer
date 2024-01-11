@@ -432,6 +432,12 @@
                       <div id="seqera_platform" class="panel-collapse collapse" role="tabpanel">
                         <div class="panel-body">
                           <p>Send all metadata to Seqera Platform as a saved Dataset, which you can use as an input when launching pipelines.</p>
+                          <div class="alert alert-danger">
+                            <p><strong>This feature does not yet work, due to Seqera Platform needing to set CORS policy headers.</strong></p>
+                            <p>You can get around this by using a browser plugin such as <a href="https://chromewebstore.google.com/detail/cors-unblock/lfhmikememgdcahcdlaciloancbhjino" target="_blank">CORS Unblock</a> for Google Chrome
+                              (enable everything and turn on the option to ignore 4xx responses).</p>
+                            <p>I hope to get the CORS policies updated at Seqera soon to make this more broadly functional.</p>
+                          </div>
                           <form id="seqera_platform_form" class="form-horizontal">
                             <div class="form-group">
                               <div class="col-sm-3">
@@ -836,7 +842,7 @@
             // Send metadata to Seqera Platform
             $scope.save_seqeraplatform = function(sp) {
               // First, create the new dataset
-              var api_url_create_dataset = sp.api_base+'/workspaces/'+sp.workspace_id+'/datasets';
+              var api_url_create_dataset = sp.api_base.replace(/\/+$/, '')+'/workspaces/'+sp.workspace_id+'/datasets';
               var create_dataset_formData = {'name': sp.name, 'description': sp.description};
               var headers = {
                 "Content-Type": "application/json",
@@ -845,32 +851,36 @@
               $http.post(
                 api_url_create_dataset,
                 JSON.stringify(create_dataset_formData),
-                {"headers": headers}
+                {"headers": headers, "withCredentials": true}
               ).then(function successCallback(sp_response) {
-                $scope.seqeraPlatformMessages.push('Created dataset: '+sp_response.id);
                 console.log(sp_response);
+                if(!("dataset" in sp_response.data) && "message" in sp_response.data){
+                  $scope.seqeraPlatformMessages.push('Error creating dataset: '+sp_response.data.message);
+                  return;
+                }
+                $scope.seqeraPlatformMessages.push('Created dataset: '+sp_response.data.dataset.id);
 
                 // Now upload the data to the created dataset
-                var api_url_upload_dataset = sp.api_base+'/workspaces/'+sp.workspace_id+'/datasets/'+sp_response.id+'/upload?header=true';
-                headers["Content-Type"] = "multipart/form-data";
+                var api_url_upload_dataset = api_url_create_dataset+'/'+sp_response.data.dataset.id+'/upload?header=true';
+                headers["Content-Type"] = undefined; // needed for multipart form data
                 var upload_dataset_formData = new FormData();
                 var dataset_content = $("#fullTSV_content").text();
-                var dataset_blob = new Blob([dataset_content], { type: "text/plain;charset=utf-8" });
-                upload_dataset_formData.append('file', dataset_blob);
+                var dataset_blob = new Blob([dataset_content], { type: "text/tab-separated-values" });
+                upload_dataset_formData.append('file', dataset_blob, 'sra_explorer_metadata.tsv');
                 $http({
                     url: api_url_upload_dataset,
                     headers: headers,
                     data: upload_dataset_formData,
                     method: "POST"
                 }).then(function successCallback(sp_response) {
-                    $scope.seqeraPlatformMessages.push('Successfully uploaded metadata');
                     console.log(sp_response);
+                    $scope.seqeraPlatformMessages.push('Successfully uploaded metadata');
                 }, function errorCallback(sp_response) {
-                    $scope.seqeraPlatformMessages.push('Error when uploading metadata (Error '+sp_response.status+')');
+                    $scope.seqeraPlatformMessages.push('Error when uploading metadata (Error '+sp_response.status+' - '+sp_response.statusText+')');
                     $scope.seqeraPlatformMessages.push('<pre><code>'+JSON.stringify(sp_response.data)+'</code></pre>');
                 });
               }, function errorCallback(sp_response) {
-                $scope.seqeraPlatformMessages.push('Error when creating dataset (Error '+sp_response.status+')');
+                $scope.seqeraPlatformMessages.push('Error when creating dataset (Error '+sp_response.status+' - '+sp_response.statusText+')');
                 $scope.seqeraPlatformMessages.push('<pre><code>'+JSON.stringify(sp_response.data)+'</code></pre>');
               });
             };

@@ -673,22 +673,26 @@
             $scope.seqeraPlatformMessages = [];
 
             // Load saved Seqera Platform connection details from cookie (not localstorage)
-            if (document.cookie.indexOf('seqeraPlatformAPIBase') > -1) {
+            if (document.cookie.indexOf('seqeraPlatformFrontendURL') > -1) {
               var frontend_url = document.cookie.split('; ').find(row => row.startsWith('seqeraPlatformFrontendURL=')).split('=')[1];
               if(frontend_url && frontend_url != ''){
                 $scope.seqeraplatform.frontend_url = frontend_url;
               }
+            }
+            if (document.cookie.indexOf('seqeraPlatformAPIBase') > -1) {
               var api_base = document.cookie.split('; ').find(row => row.startsWith('seqeraPlatformAPIBase=')).split('=')[1];
               if(api_base && api_base != ''){
                 $scope.seqeraplatform.api_base = api_base;
               }
+            }
+            if (document.cookie.indexOf('seqeraPlatformAccessToken') > -1) {
               var access_token = document.cookie.split('; ').find(row => row.startsWith('seqeraPlatformAccessToken=')).split('=')[1];
               if(access_token && access_token != ''){
                 $scope.seqeraplatform.access_token = access_token;
               }
               console.log("Loaded Seqera Platform credentials from cookie");
-              $scope.seqeraplatform.credentials_valid = are_seqera_platform_credentials_valid();
             }
+            $scope.seqeraplatform.credentials_valid = are_seqera_platform_credentials_valid();
 
 
             $scope.search  = function() { searchSRA($scope.searchText); };

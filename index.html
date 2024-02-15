@@ -522,7 +522,7 @@
                               <button type="submit" class="btn btn-default" data-toggle="modal" data-target="#seqeraPlatformConnectionModal">
                                 <span class="glyphicon glyphicon-log-in"></span> Connect
                               </button>
-                              <button type="submit" class="btn btn-default" disabled ng-click="save_seqeraplatform(seqeraplatform)" ng-disabled="!seqeraplatform.credentials_valid">
+                              <button type="submit" class="btn btn-default" disabled ng-click="save_seqeraplatform(seqeraplatform)" ng-disabled="!seqeraplatform.credentials_valid || seqeraplatform.workspace_id == ''">
                                 <span class="glyphicon glyphicon-send"></span> Add Dataset
                               </button>
                             </div>
@@ -907,14 +907,17 @@
             function are_seqera_platform_credentials_valid(){
               // Check if we have valid credentials and fetch orgs / workspaces
               if($scope.seqeraplatform.api_base && $scope.seqeraplatform.api_base != '' && $scope.seqeraplatform.access_token && $scope.seqeraplatform.access_token != ''){
-                if(get_seqera_orgs_workspaces()){
-                  return true;
-                }
+                get_seqera_orgs_workspaces();
+                return true;
               }
               return false;
             }
 
             function get_seqera_orgs_workspaces(){
+              $scope.seqeraplatform.orgs = [];
+              $scope.seqeraplatform.workspaces = {};
+              $scope.seqeraplatform.selected_org = '';
+              $scope.seqeraplatform.workspace_id = '';
               // Fetch orgs + workspaces from Seqera API /orgs endpoint
               var api_url_get_orgs = $scope.seqeraplatform.api_base.replace(/\/+$/, '')+'/orgs';
               var headers = {
@@ -928,12 +931,6 @@
               }).success(function(sp_response) {
                 console.log("Got organisations:", sp_response);
                 $scope.seqeraplatform.orgs = sp_response.organizations;
-                if($scope.seqeraplatform.orgs.length > 0){
-                  $scope.seqeraplatform.selected_org = $scope.seqeraplatform.orgs[0].orgId.toString();
-                } else {
-                  $scope.seqeraplatform.selected_org = '';
-                  $scope.seqeraplatform.workspace_id = '';
-                }
                 // Loop through each org and fetch workspaces
                 angular.forEach($scope.seqeraplatform.orgs, function(org, key) {
                   var api_url_get_workspaces = $scope.seqeraplatform.api_base.replace(/\/+$/, '')+'/orgs/'+org.orgId+'/workspaces';
@@ -951,10 +948,9 @@
                     console.log(`Error fetching workspaces for org: ${org}}`, sp_response);
                   });
                 });
-                return true;
               }, function errorCallback(sp_response) {
                 console.log("Error fetching Seqera Platform orgs", sp_response);
-                return false;
+                $scope.seqeraplatform.credentials_valid = false;
               });
             }
 

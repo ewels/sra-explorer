@@ -968,7 +968,7 @@
                 }).success(function(sp_response) {
                   console.log('Got workspaces', sp_response);
                   angular.forEach(sp_response.orgsAndWorkspaces, function(ws, key) {
-                    if(ws.workspaceId.isInteger() && has_workspace_permissions(ws.roles)){
+                    if(ws.workspaceId && has_workspace_permissions(ws.roles)){
                       $scope.seqeraplatform.orgs.push({'orgId': ws.orgId, 'name': ws.orgName});
                       if(!(ws.orgId in $scope.seqeraplatform.workspaces)){
                         $scope.seqeraplatform.workspaces[ws.orgId] = {};

@@ -1011,11 +1011,11 @@
                   return;
                 }
                 // Build FE URL to published dataset
-                console.log(sp.orgId, sp.workspace_id, sp.orgs, sp.workspaces);
-                console.log(sp.orgs[sp.orgId]);
-                console.log(sp.workspaces[sp.orgId][sp.workspace_id]);
-                let org_name = sp.orgs[sp.orgId];
-                let ws_name = sp.workspaces[sp.orgId][sp.workspace_id]['name'];
+                console.log(sp.selected_org, sp.workspace_id, sp.orgs, sp.workspaces);
+                console.log(sp.orgs[sp.selected_org]);
+                console.log(sp.workspaces[sp.selected_org][sp.workspace_id]);
+                let org_name = sp.orgs[sp.selected_org];
+                let ws_name = sp.workspaces[sp.selected_org][sp.workspace_id]['name'];
                 let dataset_url = sp.frontend_url.replace(/\/+$/, '')+'/orgs/'+org_name+'/workspaces/'+ws_name+'/datasets/'+sp_response.data.dataset.id;
                 $scope.seqeraPlatformMessages.push('Created dataset: <a href="'+dataset_url+'" target="_blank"><code>'+sp_response.data.dataset.id)+'</code></a>';
 

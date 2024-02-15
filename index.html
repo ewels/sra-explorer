@@ -927,6 +927,7 @@
                 headers: headers,
                 method: "GET"
               }).success(function(sp_response) {
+                console.log("Got organisations:", sp_response);
                 $scope.seqeraplatform.orgs = sp_response.data.organizations;
                 // Loop through each org and fetch workspaces
                 angular.forEach($scope.seqeraplatform.orgs, function(org, key) {
@@ -936,6 +937,7 @@
                     headers: headers,
                     method: "GET"
                   }).success(function(sp_response) {
+                    console.log(`Got workspaces for org ${org.orgId}`, sp_response);
                     $scope.seqeraplatform.workspaces[org.orgId] = sp_response.data.workspaces;
                   }, function errorCallback(sp_response) {
                     console.log(`Error fetching workspaces for org: ${org}}`, sp_response);

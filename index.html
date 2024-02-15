@@ -922,12 +922,20 @@
                 "Content-Type": "application/json",
                 "Authorization": "Bearer "+$scope.seqeraplatform.access_token
               };
-              $http.get(api_url_get_orgs).success(function(sp_response) {
+              $http({
+                url: api_url_get_orgs,
+                headers: headers,
+                method: "GET"
+              }).success(function(sp_response) {
                 $scope.seqeraplatform.orgs = sp_response.data.organizations;
                 // Loop through each org and fetch workspaces
                 angular.forEach($scope.seqeraplatform.orgs, function(org, key) {
                   var api_url_get_workspaces = $scope.seqeraplatform.api_base.replace(/\/+$/, '')+'/orgs/'+org.orgId+'/workspaces';
-                  $http.get(api_url_get_workspaces).success(function(sp_response) {
+                  $http({
+                    url: api_url_get_workspaces,
+                    headers: headers,
+                    method: "GET"
+                  }).success(function(sp_response) {
                     $scope.seqeraplatform.workspaces[org.orgId] = sp_response.data.workspaces;
                   }, function errorCallback(sp_response) {
                     console.log(`Error fetching workspaces for org: ${org}}`, sp_response);

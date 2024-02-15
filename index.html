@@ -226,6 +226,7 @@
                 <li class="active"><a href="#fastq_tabcontent" aria-controls="fastq_tabcontent" role="tab" data-toggle="tab">FastQ Downloads</a></li>
                 <li><a href="#sra_tabcontent" aria-controls="sra_tabcontent" role="tab" data-toggle="tab">SRA Downloads</a></li>
                 <li><a href="#full_metadata_tabcontent" aria-controls="full_metadata_tabcontent" role="tab" data-toggle="tab">Full Metadata</a></li>
+                <li><a href="#seqera_platform_tabcontent" aria-controls="seqera_platform_tabcontent" role="tab" data-toggle="tab">Seqera Platform</a></li>
               </ul>
 
               <div class="tab-content">
@@ -426,97 +427,6 @@
                     <div class="panel panel-default">
                       <div class="panel-heading" role="tab">
                         <h4 class="panel-title">
-                          <a role="button" data-toggle="collapse" data-parent="#fullMetaAccordion" href="#seqera_platform">Seqera Platform</a>
-                        </h4>
-                      </div>
-                      <div id="seqera_platform" class="panel-collapse collapse" role="tabpanel">
-                        <div class="panel-body">
-                          <p>Send all metadata to Seqera Platform as a saved Dataset, which you can use as an input when launching pipelines.</p>
-                          <form id="seqera_platform_form" class="form-horizontal">
-                            <div class="form-group">
-                              <div class="col-sm-3">
-                                <label class="sr-only" for="sp_api_base">API Base URL</label>
-                                <input type="url" class="form-control" ng-model="seqeraplatform.api_base" id="sp_api_base" placeholder="API Base URL" value="https://api.tower.nf/" required>
-                              </div>
-                              <div class="col-sm-3">
-                                <label class="sr-only" for="sp_workspace_id">Workspace ID</label>
-                                <input type="number" class="form-control" ng-model="seqeraplatform.workspace_id" id="sp_workspace_id" placeholder="Workspace ID" required>
-                              </div>
-                              <div class="col-sm-3">
-                                <label class="sr-only" for="sp_access_token">Access Token</label>
-                                <input type="password" class="form-control" ng-model="seqeraplatform.access_token" id="sp_access_token" placeholder="Access Token" required>
-                              </div>
-                              <div class="col-sm-3">
-                                <div class="checkbox">
-                                  <label>
-                                    <input type="checkbox" ng-model="seqeraplatform.save_cookie" disabled> Save in cookie
-                                  </label>
-                                </div>
-                              </div>
-                            </div>
-                            <div class="form-group">
-                              <div class="col-sm-3">
-                                <label class="sr-only" for="sp_name">Dataset name</label>
-                                <input type="text" class="form-control" ng-model="seqeraplatform.name" id="sp_name" placeholder="Dataset name" required>
-                              </div>
-                              <div class="col-sm-6">
-                                <label class="sr-only" for="sp_description">Dataset description</label>
-                                <input type="text" class="form-control" ng-model="seqeraplatform.description" id="sp_description" placeholder="Dataset description">
-                              </div>
-                              <div class="col-sm-3">
-                                <button type="submit" class="btn btn-default btn-copy" ng-click="save_seqeraplatform(seqeraplatform)">
-                                  <span class="glyphicon glyphicon-send"></span> Add to Seqera Platform
-                                </button>
-                              </div>
-                            </div>
-                          </form>
-                          <div ng-show="seqeraPlatformMessages.length > 0" class="alert alert-info">
-                            <p ng-repeat="x in seqeraPlatformMessages">{{ x }}</p>
-                          </div>
-                          <p ng-show="savedResultsENAaccessions.length < savedResults.length" class="text-center"><span class="glyphicon glyphicon-refresh fa-spin"></span> Loading <span class="badge"><span ng-bind="savedResultsENAaccessions.length"></span> / <span ng-bind="savedResults.length"></span></span>..</p>
-                          <div id="fullSeqeraPlatform_table_wrapper">
-                            <table ng-show="savedResultsENAfastq.length > 0" id="fullSeqeraPlatform_content" class="table table-bordered table-hover table-condensed">
-                              <thead>
-                                <tr>
-                                  <th>Accession</th>
-                                  <th>Title</th>
-                                  <th>Platform</th>
-                                  <th>Total bases</th>
-                                  <th>Create date</th>
-                                  <th>SRA URL</th>
-                                  <th>SRA filename</th>
-                                  <th>SRA nice filename</th>
-                                  <th>FastQ URL</th>
-                                  <th>FastQ Aspera URL</th>
-                                  <th>FastQ filename</th>
-                                  <th>FastQ nice filename</th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                                <tr ng-repeat="x in savedResultsENAfastq">
-                                  <td>{{ x.accession }}</td>
-                                  <td>{{ x.title }}</td>
-                                  <td>{{ x.platform }}</td>
-                                  <td>{{ x.total_bases }}</td>
-                                  <td>{{ x.createdate }}</td>
-                                  <td>{{ x.sra_url }}</td>
-                                  <td>{{ x.accession }}.sra</td>
-                                  <td>{{ x.sra_niceFilename }}</td>
-                                  <td>{{ x.fastq_url }}</td>
-                                  <td>{{ x.fastq_asperaurl }}</td>
-                                  <td>{{ x.fastq_filename }}</td>
-                                  <td>{{ x.fastq_niceFilename }}</td>
-                                </tr>
-                              </tbody>
-                            </table>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div class="panel panel-default">
-                      <div class="panel-heading" role="tab">
-                        <h4 class="panel-title">
                           <a role="button" data-toggle="collapse" data-parent="#fullMetaAccordion" href="#fullTSV">TSV</a>
                         </h4>
                       </div>
@@ -573,6 +483,95 @@
                   </div>
 
                 </div>
+                <div role="tabpanel" class="tab-pane fade" id="seqera_platform_tabcontent">
+
+                  <p><br>These files contain the metadata used by SRA-Explorer for downstream use. Note that each SRA record is repeated for every ENA FastQ entry.</p>
+
+                  <div class="panel panel-default">
+                    <div class="panel-heading" role="tab">
+                      <h4 class="panel-title">
+                        <a role="button" href="#seqera_platform">Seqera Platform</a>
+                      </h4>
+                    </div>
+                    <div id="seqera_platform">
+                      <div class="panel-body">
+                        <p>Send all metadata to Seqera Platform as a saved Dataset, which you can use as an input when launching pipelines.</p>
+                        <form id="seqera_platform_form" class="form-horizontal">
+                          <div class="form-group">
+                            <div class="col-sm-1">
+                              <label class="sr-only" for="sp_organisation">Organisation</label>
+                              <select class="form-control" ng-model="seqeraplatform.selected_org" id="sp_organisation">
+                                <option ng-repeat="org in seqeraplatform.orgs" value="{{ org.orgId }}">{{ org.name }}</option>
+                              </select>
+                            </div>
+                            <div class="col-sm-2">
+                              <label class="sr-only" for="sp_workspace_id">Workspace</label>
+                              <select class="form-control" ng-model="seqeraplatform.workspace_id" id="sp_workspace_id">
+                                <option ng-repeat="ws in seqeraplatform.workspaces[seqeraplatform.selected_org]" value="{{ ws.id }}">{{ ws.name }}</option>
+                              </select>
+                            </div>
+                            <div class="col-sm-2">
+                              <label class="sr-only" for="sp_name">Dataset name</label>
+                              <input type="text" class="form-control" ng-model="seqeraplatform.name" id="sp_name" placeholder="Dataset name" required>
+                            </div>
+                            <div class="col-sm-4">
+                              <label class="sr-only" for="sp_description">Dataset description</label>
+                              <input type="text" class="form-control" ng-model="seqeraplatform.description" id="sp_description" placeholder="Dataset description">
+                            </div>
+                            <div class="col-sm-3">
+                              <button type="submit" class="btn btn-default" data-toggle="modal" data-target="#seqeraPlatformConnectionModal">
+                                <span class="glyphicon glyphicon-log-in"></span> Connect
+                              </button>
+                              <button type="submit" class="btn btn-default" disabled ng-click="save_seqeraplatform(seqeraplatform)" ng-disabled="!seqeraplatform.credentials_valid">
+                                <span class="glyphicon glyphicon-send"></span> Add Dataset
+                              </button>
+                            </div>
+                          </div>
+                        </form>
+                        <div ng-show="seqeraPlatformMessages.length > 0" class="alert alert-info">
+                          <p ng-repeat="x in seqeraPlatformMessages">{{ x }}</p>
+                        </div>
+                        <p ng-show="savedResultsENAaccessions.length < savedResults.length" class="text-center"><span class="glyphicon glyphicon-refresh fa-spin"></span> Loading <span class="badge"><span ng-bind="savedResultsENAaccessions.length"></span> / <span ng-bind="savedResults.length"></span></span>..</p>
+                        <div id="fullSeqeraPlatform_table_wrapper">
+                          <table ng-show="savedResultsENAfastq.length > 0" id="fullSeqeraPlatform_content" class="table table-bordered table-hover table-condensed">
+                            <thead>
+                              <tr>
+                                <th>Accession</th>
+                                <th>Title</th>
+                                <th>Platform</th>
+                                <th>Total bases</th>
+                                <th>Create date</th>
+                                <th>SRA URL</th>
+                                <th>SRA filename</th>
+                                <th>SRA nice filename</th>
+                                <th>FastQ URL</th>
+                                <th>FastQ Aspera URL</th>
+                                <th>FastQ filename</th>
+                                <th>FastQ nice filename</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr ng-repeat="x in savedResultsENAfastq">
+                                <td>{{ x.accession }}</td>
+                                <td>{{ x.title }}</td>
+                                <td>{{ x.platform }}</td>
+                                <td>{{ x.total_bases }}</td>
+                                <td>{{ x.createdate }}</td>
+                                <td>{{ x.sra_url }}</td>
+                                <td>{{ x.accession }}.sra</td>
+                                <td>{{ x.sra_niceFilename }}</td>
+                                <td>{{ x.fastq_url }}</td>
+                                <td>{{ x.fastq_asperaurl }}</td>
+                                <td>{{ x.fastq_filename }}</td>
+                                <td>{{ x.fastq_niceFilename }}</td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
         </div>
 
@@ -590,7 +589,39 @@
             Here a lot? It might be worth taking a look at <a href="https://github.com/ewels/sra-explorer#alternatives">some alternative tools</a>..
         </p>
     </div>
-    <hr>
+
+    <!-- Modal -->
+    <div class="modal fade" id="seqeraPlatformConnectionModal" tabindex="-1" role="dialog" aria-labelledby="seqeraPlatformConnectionModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="seqeraPlatformConnectionModalLabel">Seqera Platform Connection</h4>
+          </div>
+          <div class="modal-body">
+            <p>To connect to the Seqera Platform, please enter your API Base URL and Access Token:</p>
+            <div class="form-group">
+              <label for="sp_api_base">API Base URL</label>
+              <input type="text" class="form-control" ng-model="seqeraplatform.api_base" id="sp_api_base" placeholder="API Base URL" value="https://api.tower.nf/" required>
+              <p class="help-block small">If using Seqera Cloud, leave as <code>https://api.tower.nf/</code>. If using a custom Seqera Enterprise installation, configure your base API route.</p>
+            </div>
+            <div class="form-group">
+              <label for="sp_access_token">Access Token</label>
+              <input type="password" class="form-control" ng-model="seqeraplatform.access_token" id="sp_access_token" placeholder="Access Token" required>
+              <p class="help-block small">Create an Access Token at <a href="https://tower.nf/tokens" target="_blank">https://tower.nf/tokens</a> (or in your enterprise installation).</p>
+            </div>
+            <p>
+              You may save these details in a browser cookie, so that you do not need to enter them every time.
+              This is stored on your device only. <strong>Do not use this feature on a shared computer.</strong>
+            </p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" ng-click="save_seqera_credentials(seqeraplatform, false)">Close and use this time</button>
+            <button type="button" class="btn btn-primary" ng-click="save_seqera_credentials(seqeraplatform, true)">Save in browser cookie</button>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <!-- Core JavaScript -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
@@ -623,13 +654,31 @@
             $scope.ascp_append_mv = true;
             $scope.seqeraplatform = {
               'api_base': 'https://api.tower.nf/',
-              'workspace_id': '',
               'access_token': '',
-              'save_cookie': true,
+              'workspace_id': '',
               'name': '',
-              'description': ''
+              'description': '',
+              'credentials_valid': false,
+              'organizations': [],
+              'workspaces': {},
+              'selected_org': ''
             };
             $scope.seqeraPlatformMessages = [];
+
+            // Load saved Seqera Platform connection details from cookie (not localstorage)
+            if (document.cookie.indexOf('seqeraPlatformAPIBase') > -1) {
+              var api_base = document.cookie.split('; ').find(row => row.startsWith('seqeraPlatformAPIBase=')).split('=')[1];
+              if(api_base && api_base != ''){
+                $scope.seqeraplatform.api_base = api_base;
+              }
+              var access_token = document.cookie.split('; ').find(row => row.startsWith('seqeraPlatformAccessToken=')).split('=')[1];
+              if(access_token && access_token != ''){
+                $scope.seqeraplatform.access_token = access_token;
+              }
+              console.log("Loaded Seqera Platform credentials from cookie");
+              $scope.seqeraplatform.credentials_valid = are_seqera_platform_credentials_valid();
+            }
+
 
             $scope.search  = function() { searchSRA($scope.searchText); };
 
@@ -831,6 +880,64 @@
                 var content = $(target).text();
                 var blob = new Blob([content], { type: "text/plain;charset=utf-8" });
                 saveAs(blob, filename);
+            }
+
+            // Save Seqera Platform API details to a cookie
+            $scope.save_seqera_credentials = function(sp, save_cookie) {
+              if(save_cookie){
+                console.log("Saving Seqera Platform API details to cookie");
+                // Expire in 1 month
+                var d = new Date();
+                d.setTime(d.getTime() + (30*24*60*60*1000));
+                var expires = "; expires="+d.toUTCString();
+                // Save cookies
+                document.cookie = "seqeraPlatformAPIBase="+sp.api_base+expires;
+                document.cookie = "seqeraPlatformAccessToken="+sp.access_token+expires;
+              }
+              // Set valid state
+              $scope.seqeraplatform.credentials_valid = are_seqera_platform_credentials_valid();
+              // Hide the modal
+              if($scope.seqeraplatform.credentials_valid){
+                $('#seqeraPlatformConnectionModal').modal('hide');
+              } else {
+                alert("Credentials seem invalid");
+              }
+            }
+
+            function are_seqera_platform_credentials_valid(){
+              // Check if we have valid credentials and fetch orgs / workspaces
+              if($scope.seqeraplatform.api_base && $scope.seqeraplatform.api_base != '' && $scope.seqeraplatform.access_token && $scope.seqeraplatform.access_token != ''){
+                if(get_seqera_orgs_workspaces()){
+                  console.log("Got orgs and workspaces");
+                  return true;
+                }
+              }
+              return false;
+            }
+
+            function get_seqera_orgs_workspaces(){
+              // Fetch orgs + workspaces from Seqera API /orgs endpoint
+              var api_url_get_orgs = $scope.seqeraplatform.api_base.replace(/\/+$/, '')+'/orgs';
+              var headers = {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer "+$scope.seqeraplatform.access_token
+              };
+              $http.get(api_url_get_orgs).success(function(sp_response) {
+                $scope.seqeraplatform.orgs = sp_response.data.organizations;
+                // Loop through each org and fetch workspaces
+                angular.forEach($scope.seqeraplatform.orgs, function(org, key) {
+                  var api_url_get_workspaces = $scope.seqeraplatform.api_base.replace(/\/+$/, '')+'/orgs/'+org.orgId+'/workspaces';
+                  $http.get(api_url_get_workspaces).success(function(sp_response) {
+                    $scope.seqeraplatform.workspaces[org.orgId] = sp_response.data.workspaces;
+                  }, function errorCallback(sp_response) {
+                    console.log(`Error fetching workspaces for org: ${org}}`, sp_response);
+                  });
+                });
+                return true;
+              }, function errorCallback(sp_response) {
+                console.log("Error fetching Seqera Platform orgs", sp_response);
+                return false;
+              });
             }
 
             // Send metadata to Seqera Platform

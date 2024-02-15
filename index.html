@@ -426,18 +426,12 @@
                     <div class="panel panel-default">
                       <div class="panel-heading" role="tab">
                         <h4 class="panel-title">
-                          <a role="button" data-toggle="collapse" data-parent="#fullMetaAccordion" href="#seqera_platform">Seqera Platform (under development)</a>
+                          <a role="button" data-toggle="collapse" data-parent="#fullMetaAccordion" href="#seqera_platform">Seqera Platform</a>
                         </h4>
                       </div>
                       <div id="seqera_platform" class="panel-collapse collapse" role="tabpanel">
                         <div class="panel-body">
                           <p>Send all metadata to Seqera Platform as a saved Dataset, which you can use as an input when launching pipelines.</p>
-                          <div class="alert alert-danger">
-                            <p><strong>This feature does not yet work, due to Seqera Platform needing to set CORS policy headers.</strong></p>
-                            <p>You can get around this by using a browser plugin such as <a href="https://chromewebstore.google.com/detail/cors-unblock/lfhmikememgdcahcdlaciloancbhjino" target="_blank">CORS Unblock</a> for Google Chrome
-                              (enable everything and turn on the option to ignore 4xx responses).</p>
-                            <p>I hope to get the CORS policies updated at Seqera soon to make this more broadly functional.</p>
-                          </div>
                           <form id="seqera_platform_form" class="form-horizontal">
                             <div class="form-group">
                               <div class="col-sm-3">
@@ -455,7 +449,7 @@
                               <div class="col-sm-3">
                                 <div class="checkbox">
                                   <label>
-                                    <input type="checkbox" ng-model="seqeraplatform.save_cookie" checked> Save in cookie
+                                    <input type="checkbox" ng-model="seqeraplatform.save_cookie" disabled> Save in cookie
                                   </label>
                                 </div>
                               </div>

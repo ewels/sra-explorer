@@ -529,7 +529,7 @@
                           </div>
                         </form>
                         <div ng-show="seqeraPlatformMessages.length > 0" class="alert alert-info">
-                          <p ng-repeat="x in seqeraPlatformMessages">{{ x }}</p>
+                          <d ng-repeat="x in seqeraPlatformMessages"><p ng-bind-html="x"></p></d>
                         </div>
                         <p ng-show="savedResultsENAaccessions.length < savedResults.length" class="text-center"><span class="glyphicon glyphicon-refresh fa-spin"></span> Loading <span class="badge"><span ng-bind="savedResultsENAaccessions.length"></span> / <span ng-bind="savedResults.length"></span></span>..</p>
                         <div id="fullSeqeraPlatform_table_wrapper">
@@ -601,9 +601,14 @@
           <div class="modal-body">
             <p>To connect to the Seqera Platform, please enter your API Base URL and Access Token:</p>
             <div class="form-group">
+              <label for="sp_frontend_url">Seqera Platform URL</label>
+              <input type="text" class="form-control" ng-model="seqeraplatform.frontend_url" id="sp_frontend_url" placeholder="Platform URL" value="https://tower.nf/" required>
+              <p class="help-block small">If using Seqera Cloud, leave as <code>https://tower.nf/</code>. If using a custom Seqera Enterprise installation, enter your base Seqera Platform URL.</p>
+            </div>
+            <div class="form-group">
               <label for="sp_api_base">API Base URL</label>
               <input type="text" class="form-control" ng-model="seqeraplatform.api_base" id="sp_api_base" placeholder="API Base URL" value="https://api.tower.nf/" required>
-              <p class="help-block small">If using Seqera Cloud, leave as <code>https://api.tower.nf/</code>. If using a custom Seqera Enterprise installation, configure your base API route.</p>
+              <p class="help-block small">If using Seqera Cloud, leave as <code>https://api.tower.nf/</code>. If using a custom Seqera Enterprise installation, enter your base API route.</p>
             </div>
             <div class="form-group">
               <label for="sp_access_token">Access Token</label>
@@ -653,13 +658,15 @@
             $scope.ascp_openssh_location = '$HOME/.aspera/connect/etc/asperaweb_id_dsa.openssh';
             $scope.ascp_append_mv = true;
             $scope.seqeraplatform = {
+              'frontend_url': 'https://tower.nf/',
               'api_base': 'https://api.tower.nf/',
               'access_token': '',
+              'user_id': '',
               'workspace_id': '',
               'name': '',
               'description': '',
               'credentials_valid': false,
-              'organizations': [],
+              'orgs': [],
               'workspaces': {},
               'selected_org': ''
             };
@@ -667,6 +674,10 @@
 
             // Load saved Seqera Platform connection details from cookie (not localstorage)
             if (document.cookie.indexOf('seqeraPlatformAPIBase') > -1) {
+              var frontend_url = document.cookie.split('; ').find(row => row.startsWith('seqeraPlatformFrontendURL=')).split('=')[1];
+              if(frontend_url && frontend_url != ''){
+                $scope.seqeraplatform.frontend_url = frontend_url;
+              }
               var api_base = document.cookie.split('; ').find(row => row.startsWith('seqeraPlatformAPIBase=')).split('=')[1];
               if(api_base && api_base != ''){
                 $scope.seqeraplatform.api_base = api_base;
@@ -891,6 +902,7 @@
                 d.setTime(d.getTime() + (30*24*60*60*1000));
                 var expires = "; expires="+d.toUTCString();
                 // Save cookies
+                document.cookie = "seqeraPlatformFrontendURL="+sp.frontend_url+expires;
                 document.cookie = "seqeraPlatformAPIBase="+sp.api_base+expires;
                 document.cookie = "seqeraPlatformAccessToken="+sp.access_token+expires;
               }
@@ -906,46 +918,59 @@
 
             function are_seqera_platform_credentials_valid(){
               // Check if we have valid credentials and fetch orgs / workspaces
-              if($scope.seqeraplatform.api_base && $scope.seqeraplatform.api_base != '' && $scope.seqeraplatform.access_token && $scope.seqeraplatform.access_token != ''){
+              if($scope.seqeraplatform.frontend_url && $scope.seqeraplatform.frontend_url != '' && $scope.seqeraplatform.api_base && $scope.seqeraplatform.api_base != '' && $scope.seqeraplatform.access_token && $scope.seqeraplatform.access_token != ''){
                 get_seqera_orgs_workspaces();
                 return true;
               }
               return false;
             }
 
+            function has_workspace_permissions(roles){
+              let valid_roles = ['owner','admin','maintain','launch'];
+              for (var i = 0; i < valid_roles.length; i++) {
+                if(roles.indexOf(valid_roles[i]) > -1){
+                  return true;
+                }
+              }
+              return false;
+            }
+
             function get_seqera_orgs_workspaces(){
+              $scope.seqeraplatform.user_id = '';
               $scope.seqeraplatform.orgs = [];
               $scope.seqeraplatform.workspaces = {};
               $scope.seqeraplatform.selected_org = '';
               $scope.seqeraplatform.workspace_id = '';
-              // Fetch orgs + workspaces from Seqera API /orgs endpoint
-              var api_url_get_orgs = $scope.seqeraplatform.api_base.replace(/\/+$/, '')+'/orgs';
+              // Get the User ID from Seqera API /user-info endpoint
+              var api_url_get_user = $scope.seqeraplatform.api_base.replace(/\/+$/, '')+'/user-info';
               var headers = {
                 "Content-Type": "application/json",
                 "Authorization": "Bearer "+$scope.seqeraplatform.access_token
               };
               $http({
-                url: api_url_get_orgs,
+                url: api_url_get_user,
                 headers: headers,
                 method: "GET"
               }).success(function(sp_response) {
-                console.log("Got organisations:", sp_response);
-                $scope.seqeraplatform.orgs = sp_response.organizations;
-                // Loop through each org and fetch workspaces
-                angular.forEach($scope.seqeraplatform.orgs, function(org, key) {
-                  var api_url_get_workspaces = $scope.seqeraplatform.api_base.replace(/\/+$/, '')+'/orgs/'+org.orgId+'/workspaces';
-                  $http({
-                    url: api_url_get_workspaces,
-                    headers: headers,
-                    method: "GET"
-                  }).success(function(sp_response) {
-                    console.log(`Got workspaces for org ${org.orgId}`, sp_response);
-                    $scope.seqeraplatform.workspaces[org.orgId] = sp_response.workspaces;
-                    if(org.orgId == $scope.seqeraplatform.selected_org && $scope.seqeraplatform.workspaces[org.orgId].length > 0){
-                      $scope.seqeraplatform.workspace_id = $scope.seqeraplatform.workspaces[org.orgId][0].id.toString();
+                console.log("Got user:", sp_response);
+                $scope.seqeraplatform.user_id = sp_response.user.id;
+                $scope.seqeraplatform.workspace_id = sp_response.defaultWorkspaceId.toString();
+                // Now get orgs and workspaces
+                var api_url_get_orgs_workspaces = $scope.seqeraplatform.api_base.replace(/\/+$/, '')+'/user/'+$scope.seqeraplatform.user_id+'/workspaces';
+                $http({
+                  url: api_url_get_orgs_workspaces,
+                  headers: headers,
+                  method: "GET"
+                }).success(function(sp_response) {
+                  console.log('Got workspaces', sp_response);
+                  angular.forEach(sp_response.orgsAndWorkspaces, function(ws, key) {
+                    if(ws.workspaceId.isInteger() && has_workspace_permissions(ws.roles)){
+                      $scope.seqeraplatform.orgs.push({'orgId': ws.orgId, 'name': ws.orgName});
+                      if(!(ws.orgId in $scope.seqeraplatform.workspaces)){
+                        $scope.seqeraplatform.workspaces[ws.orgId] = {};
+                      }
+                      $scope.seqeraplatform.workspaces[ws.orgId][ws.workspaceId] = ws.workspaceFullName;
                     }
-                  }, function errorCallback(sp_response) {
-                    console.log(`Error fetching workspaces for org: ${org}}`, sp_response);
                   });
                 });
               }, function errorCallback(sp_response) {
@@ -960,6 +985,7 @@
 
             // Send metadata to Seqera Platform
             $scope.save_seqeraplatform = function(sp) {
+              $scope.seqeraPlatformMessages = [];
               // First, create the new dataset
               var api_url_create_dataset = sp.api_base.replace(/\/+$/, '')+'/workspaces/'+sp.workspace_id+'/datasets';
               var create_dataset_formData = {'name': sp.name, 'description': sp.description};
@@ -977,7 +1003,9 @@
                   $scope.seqeraPlatformMessages.push('Error creating dataset: '+sp_response.data.message);
                   return;
                 }
-                $scope.seqeraPlatformMessages.push('Created dataset: '+sp_response.data.dataset.id);
+                // https://tower.nf/orgs/phil-test/workspaces/sra-explorer-testing/datasets/VbQTAN1AIkjjktKRd9E6U
+                let dataset_url = sp.frontend_url.replace(/\/+$/, '')+'/workspaces/'+sp.workspace_id+'/datasets/'+sp_response.data.dataset.id;
+                $scope.seqeraPlatformMessages.push('Created dataset: <a href="'+dataset_url+'" target="_blank"><code>'+sp_response.data.dataset.id)+'</code></a>';
 
                 // Now upload the data to the created dataset
                 var api_url_upload_dataset = api_url_create_dataset+'/'+sp_response.data.dataset.id+'/upload?header=true';

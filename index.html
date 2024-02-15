@@ -944,8 +944,8 @@
                   }).success(function(sp_response) {
                     console.log(`Got workspaces for org ${org.orgId}`, sp_response);
                     $scope.seqeraplatform.workspaces[org.orgId] = sp_response.workspaces;
-                    if(org.orgId == $scope.seqeraplatform.selected_org && sp_response.workspaces[org.orgId].length > 0){
-                      $scope.seqeraplatform.workspace_id = sp_response.workspaces[org.orgId][0].id;
+                    if(org.orgId == $scope.seqeraplatform.selected_org && $scope.seqeraplatform.workspaces[org.orgId].length > 0){
+                      $scope.seqeraplatform.workspace_id = $scope.seqeraplatform.workspaces[org.orgId][0].id;
                     }
                   }, function errorCallback(sp_response) {
                     console.log(`Error fetching workspaces for org: ${org}}`, sp_response);
@@ -959,7 +959,7 @@
             }
 
             $scope.update_seqera_org = function(){
-              $scope.seqeraplatform.workspace_id = sp_response.workspaces[$scope.seqeraplatform.selected_org][0].id;
+              $scope.seqeraplatform.workspace_id = $scope.seqeraplatform.workspaces[$scope.seqeraplatform.selected_org][0].id;
             }
 
             // Send metadata to Seqera Platform

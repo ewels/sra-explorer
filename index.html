@@ -498,7 +498,7 @@
                         <p>Send all metadata to Seqera Platform as a saved Dataset, which you can use as an input when launching pipelines.</p>
                         <form id="seqera_platform_form" class="form-horizontal">
                           <div class="form-group">
-                            <div class="col-sm-1">
+                            <div class="col-sm-2">
                               <label class="sr-only" for="sp_organisation">Organisation</label>
                               <select class="form-control" ng-model="seqeraplatform.selected_org" id="sp_organisation">
                                 <option ng-repeat="org in seqeraplatform.orgs" value="{{ org.orgId }}">{{ org.name }}</option>
@@ -514,7 +514,7 @@
                               <label class="sr-only" for="sp_name">Dataset name</label>
                               <input type="text" class="form-control" ng-model="seqeraplatform.name" id="sp_name" placeholder="Dataset name" required>
                             </div>
-                            <div class="col-sm-4">
+                            <div class="col-sm-3">
                               <label class="sr-only" for="sp_description">Dataset description</label>
                               <input type="text" class="form-control" ng-model="seqeraplatform.description" id="sp_description" placeholder="Dataset description">
                             </div>
@@ -908,7 +908,6 @@
               // Check if we have valid credentials and fetch orgs / workspaces
               if($scope.seqeraplatform.api_base && $scope.seqeraplatform.api_base != '' && $scope.seqeraplatform.access_token && $scope.seqeraplatform.access_token != ''){
                 if(get_seqera_orgs_workspaces()){
-                  console.log("Got orgs and workspaces");
                   return true;
                 }
               }
@@ -927,8 +926,9 @@
                 headers: headers,
                 method: "GET"
               }).success(function(sp_response) {
-                console.log("Got organisations:", sp_response);
+                // console.log("Got organisations:", sp_response);
                 $scope.seqeraplatform.orgs = sp_response.organizations;
+                $scope.seqeraplatform.selected_org = $scope.seqeraplatform.orgs[0].orgId;
                 // Loop through each org and fetch workspaces
                 angular.forEach($scope.seqeraplatform.orgs, function(org, key) {
                   var api_url_get_workspaces = $scope.seqeraplatform.api_base.replace(/\/+$/, '')+'/orgs/'+org.orgId+'/workspaces';
@@ -937,8 +937,11 @@
                     headers: headers,
                     method: "GET"
                   }).success(function(sp_response) {
-                    console.log(`Got workspaces for org ${org.orgId}`, sp_response);
+                    // console.log(`Got workspaces for org ${org.orgId}`, sp_response);
                     $scope.seqeraplatform.workspaces[org.orgId] = sp_response.workspaces;
+                    if(org.orgId == $scope.seqeraplatform.selected_org){
+                      $scope.seqeraplatform.workspace_id = sp_response.workspaces[org.orgId][0].id;
+                    }
                   }, function errorCallback(sp_response) {
                     console.log(`Error fetching workspaces for org: ${org}}`, sp_response);
                   });

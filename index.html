@@ -501,13 +501,13 @@
                             <div class="col-sm-2">
                               <label class="sr-only" for="sp_organisation">Organisation</label>
                               <select class="form-control" ng-model="seqeraplatform.selected_org" ng-change="update_seqera_org()"> id="sp_organisation">
-                                <option ng-repeat="org in seqeraplatform.orgs" value="{{ org.orgId }}">{{ org.name }}</option>
+                                <option ng-repeat="(orgId, orgName) in seqeraplatform.orgs" value="{{ orgId }}">{{ orgName }}</option>
                               </select>
                             </div>
                             <div class="col-sm-2">
                               <label class="sr-only" for="sp_workspace_id">Workspace</label>
                               <select class="form-control" ng-model="seqeraplatform.workspace_id" id="sp_workspace_id">
-                                <option ng-repeat="ws in seqeraplatform.workspaces[seqeraplatform.selected_org]" value="{{ ws.id }}">{{ ws.name }}</option>
+                                <option ng-repeat="(wsId, ws) in seqeraplatform.workspaces[seqeraplatform.selected_org]" value="{{ wsId }}">{{ ws.fullName }}</option>
                               </select>
                             </div>
                             <div class="col-sm-2">
@@ -666,7 +666,7 @@
               'name': '',
               'description': '',
               'credentials_valid': false,
-              'orgs': [],
+              'orgs': {},
               'workspaces': {},
               'selected_org': ''
             };
@@ -941,7 +941,7 @@
 
             function get_seqera_orgs_workspaces(){
               $scope.seqeraplatform.user_id = '';
-              $scope.seqeraplatform.orgs = [];
+              $scope.seqeraplatform.orgs = {};
               $scope.seqeraplatform.workspaces = {};
               $scope.seqeraplatform.selected_org = '';
               $scope.seqeraplatform.workspace_id = '';
@@ -969,11 +969,11 @@
                   console.log('Got workspaces', sp_response);
                   angular.forEach(sp_response.orgsAndWorkspaces, function(ws, key) {
                     if(ws.workspaceId && has_workspace_permissions(ws.roles)){
-                      $scope.seqeraplatform.orgs.push({'orgId': ws.orgId, 'name': ws.orgName});
+                      $scope.seqeraplatform.orgs[ws.orgId] = ws.orgName;
                       if(!(ws.orgId in $scope.seqeraplatform.workspaces)){
                         $scope.seqeraplatform.workspaces[ws.orgId] = {};
                       }
-                      $scope.seqeraplatform.workspaces[ws.orgId][ws.workspaceId] = ws.workspaceFullName;
+                      $scope.seqeraplatform.workspaces[ws.orgId][ws.workspaceId] = {'fullName': ws.workspaceFullName, 'name': ws.workspaceName};
                     }
                   });
                 });
@@ -984,7 +984,7 @@
             }
 
             $scope.update_seqera_org = function(){
-              $scope.seqeraplatform.workspace_id = $scope.seqeraplatform.workspaces[$scope.seqeraplatform.selected_org][0].id.toString();
+              $scope.seqeraplatform.workspace_id = Object.keys($scope.seqeraplatform.workspaces[$scope.seqeraplatform.selected_org])[0].toString();
             }
 
             // Send metadata to Seqera Platform
@@ -1007,8 +1007,10 @@
                   $scope.seqeraPlatformMessages.push('Error creating dataset: '+sp_response.data.message);
                   return;
                 }
-                // https://tower.nf/orgs/phil-test/workspaces/sra-explorer-testing/datasets/VbQTAN1AIkjjktKRd9E6U
-                let dataset_url = sp.frontend_url.replace(/\/+$/, '')+'/workspaces/'+sp.workspace_id+'/datasets/'+sp_response.data.dataset.id;
+                // Build FE URL to published dataset
+                let org_name = sp.orgs[sp.orgId];
+                let ws_name = sp.workspaces[sp.orgId][sp.workspace_id]['name'];
+                let dataset_url = sp.frontend_url.replace(/\/+$/, '')+'/orgs/'+org_name+'/workspaces/'+ws_name+'/datasets/'+sp_response.data.dataset.id;
                 $scope.seqeraPlatformMessages.push('Created dataset: <a href="'+dataset_url+'" target="_blank"><code>'+sp_response.data.dataset.id)+'</code></a>';
 
                 // Now upload the data to the created dataset

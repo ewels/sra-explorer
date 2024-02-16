@@ -599,7 +599,7 @@
             <h4 class="modal-title" id="seqeraPlatformConnectionModalLabel">Seqera Platform Connection</h4>
           </div>
           <div class="modal-body">
-            <p>To connect to the Seqera Platform, please enter your API Base URL and Access Token:</p>
+            <p>To connect to the Seqera Platform, please enter your credentials:</p>
             <div class="form-group">
               <label for="sp_frontend_url">Seqera Platform URL</label>
               <input type="text" class="form-control" ng-model="seqeraplatform.frontend_url" id="sp_frontend_url" placeholder="Platform URL" value="https://tower.nf/" required>
@@ -615,7 +615,7 @@
               <input type="password" class="form-control" ng-model="seqeraplatform.access_token" id="sp_access_token" placeholder="Access Token" required>
               <p class="help-block small">Create an Access Token at <a href="https://tower.nf/tokens" target="_blank">https://tower.nf/tokens</a> (or in your enterprise installation).</p>
             </div>
-            <p>
+            <p class="small">
               You may save these details in a browser cookie, so that you do not need to enter them every time.
               This is stored on your device only. <strong>Do not use this feature on a shared computer.</strong>
             </p>

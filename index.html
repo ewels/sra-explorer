@@ -528,7 +528,7 @@
                             </div>
                           </div>
                         </form>
-                        <div ng-show="seqeraplatform.messages.length > 0" class="alert" ng-class="{'alert-info': !seqeraplatform.hasError, 'alert-danger': seqeraplatform.hasError }">
+                        <div ng-show="seqeraplatform.messages.length > 0" class="alert" ng-class="{'alert-success': !seqeraplatform.hasError, 'alert-danger': seqeraplatform.hasError }">
                           <p ng-repeat="x in seqeraplatform.messages"><ng-bind-html ng-bind-html="x"></ng-bind-html></p>
                         </div>
                         <p ng-show="savedResultsENAaccessions.length < savedResults.length" class="text-center"><span class="glyphicon glyphicon-refresh fa-spin"></span> Loading <span class="badge"><span ng-bind="savedResultsENAaccessions.length"></span> / <span ng-bind="savedResults.length"></span></span>..</p>
@@ -1011,17 +1011,16 @@
                 {"headers": headers, "withCredentials": true}
               ).then(function successCallback(sp_response) {
                 if(!("dataset" in sp_response.data) && "message" in sp_response.data){
+                  $scope.seqeraplatform.hasError = true;
                   $scope.seqeraplatform.messages.push('Error creating dataset: '+sp_response.data.message);
                   return;
                 }
-                // Build FE URL to published dataset
-                let org_name = sp.orgs[sp.selected_org];
-                let ws_name = sp.workspaces[sp.selected_org][sp.workspace_id];
-                let dataset_url = sp.frontend_url.replace(/\/+$/, '')+'/orgs/'+org_name+'/workspaces/'+ws_name+'/datasets/'+sp_response.data.dataset.id;
-                $scope.seqeraplatform.messages.push('<span class="glyphicon glyphicon-ok"></span> Created dataset: <code>'+sp_response.data.dataset.id)+'</code> (<a href="'+dataset_url+'" target="_blank">View on Seqera Platform <span class="glyphicon glyphicon-new-window"></span></a>)';
+                var ds_id = sp_response.data.dataset.id;
+                $scope.seqeraplatform.messages.push('<span class="glyphicon glyphicon-ok"></span> Created dataset: <code>'+ds_id)+'</code>';
+                console.log($scope.seqeraplatform.messages);
 
                 // Now upload the data to the created dataset
-                var api_url_upload_dataset = api_url_create_dataset+'/'+sp_response.data.dataset.id+'/upload?header=true';
+                var api_url_upload_dataset = api_url_create_dataset+'/'+ds_id+'/upload?header=true';
                 headers["Content-Type"] = undefined; // needed for multipart form data
                 var upload_dataset_formData = new FormData();
                 var dataset_content = $("#fullTSV_content").text();
@@ -1034,6 +1033,11 @@
                     method: "POST"
                 }).then(function successCallback(sp_response) {
                     $scope.seqeraplatform.messages.push('<span class="glyphicon glyphicon-ok"></span> Successfully uploaded metadata');
+                    // Build FE URL to published dataset
+                    let org_name = sp.orgs[sp.selected_org];
+                    let ws_name = sp.workspaces[sp.selected_org][sp.workspace_id];
+                    let dataset_url = sp.frontend_url.replace(/\/+$/, '')+'/orgs/'+org_name+'/workspaces/'+ws_name+'/datasets/'+ds_id;
+                    $scope.seqeraplatform.messages.push('<span class="glyphicon glyphicon-new-window"></span> <a href="'+dataset_url+'" target="_blank">View on Seqera Platform</a>');
                 }, function errorCallback(sp_response) {
                     console.log(sp_response);
                     $scope.seqeraplatform.hasError = true;

@@ -522,7 +522,7 @@
                               <button type="submit" class="btn btn-default" data-toggle="modal" data-target="#seqeraPlatformConnectionModal">
                                 <span class="glyphicon glyphicon-log-in"></span> Connect
                               </button>
-                              <button type="submit" class="btn btn-default" disabled ng-click="save_seqeraplatform(seqeraplatform)" ng-disabled="!seqeraplatform.credentials_valid || seqeraplatform.workspace_id == ''">
+                              <button type="submit" class="btn btn-primary" disabled ng-click="save_seqeraplatform(seqeraplatform)" ng-disabled="!seqeraplatform.credentials_valid || seqeraplatform.workspace_id == ''">
                                 <span class="glyphicon glyphicon-send"></span> Add Dataset
                               </button>
                             </div>
@@ -1010,7 +1010,6 @@
                 JSON.stringify(create_dataset_formData),
                 {"headers": headers, "withCredentials": true}
               ).then(function successCallback(sp_response) {
-                console.log(sp_response);
                 if(!("dataset" in sp_response.data) && "message" in sp_response.data){
                   $scope.seqeraplatform.messages.push('Error creating dataset: '+sp_response.data.message);
                   return;
@@ -1034,14 +1033,15 @@
                     data: upload_dataset_formData,
                     method: "POST"
                 }).then(function successCallback(sp_response) {
-                    console.log(sp_response);
                     $scope.seqeraplatform.messages.push('<span class="glyphicon glyphicon-ok"></span> Successfully uploaded metadata');
                 }, function errorCallback(sp_response) {
+                    console.log(sp_response);
                     $scope.seqeraplatform.hasError = true;
                     $scope.seqeraplatform.messages.push('Error when uploading metadata (Error '+sp_response.status+' - '+sp_response.statusText+')');
                     $scope.seqeraplatform.messages.push('<pre><code>'+JSON.stringify(sp_response.data)+'</code></pre>');
                 });
               }, function errorCallback(sp_response) {
+                console.log(sp_response);
                 $scope.seqeraplatform.hasError = true;
                 $scope.seqeraplatform.messages.push('Error when creating dataset (<code>'+sp_response.status+' - '+sp_response.statusText+'</code>)');
                 $scope.seqeraplatform.messages.push('<pre><code>'+JSON.stringify(sp_response.data)+'</code></pre>');

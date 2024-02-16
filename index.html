@@ -959,7 +959,6 @@
               }).success(function(sp_response) {
                 console.log("Got user:", sp_response);
                 $scope.seqeraplatform.user_id = sp_response.user.id;
-                $scope.seqeraplatform.workspace_id = sp_response.defaultWorkspaceId.toString();
                 // Now get orgs and workspaces
                 var api_url_get_orgs_workspaces = $scope.seqeraplatform.api_base.replace(/\/+$/, '')+'/user/'+$scope.seqeraplatform.user_id+'/workspaces';
                 $http({
@@ -973,6 +972,7 @@
                       $scope.seqeraplatform.orgs[ws.orgId] = ws.orgName;
                       if($scope.seqeraplatform.selected_org = ''){
                         $scope.seqeraplatform.selected_org = ws.orgId;
+                        $scope.seqeraplatform.workspace_id = ws.workspaceId;
                       }
                       if(!(ws.orgId in $scope.seqeraplatform.workspaces)){
                         $scope.seqeraplatform.workspaces[ws.orgId] = {};

@@ -970,9 +970,9 @@
                   angular.forEach(sp_response.orgsAndWorkspaces, function(ws, key) {
                     if(ws.workspaceId && has_workspace_permissions(ws.roles)){
                       $scope.seqeraplatform.orgs[ws.orgId] = ws.orgName;
-                      if($scope.seqeraplatform.selected_org = ''){
-                        $scope.seqeraplatform.selected_org = ws.orgId;
-                        $scope.seqeraplatform.workspace_id = ws.workspaceId;
+                      if($scope.seqeraplatform.selected_org == ''){
+                        $scope.seqeraplatform.selected_org = ws.orgId.toString();
+                        $scope.seqeraplatform.workspace_id = ws.workspaceId.toString();
                       }
                       if(!(ws.orgId in $scope.seqeraplatform.workspaces)){
                         $scope.seqeraplatform.workspaces[ws.orgId] = {};
@@ -1015,7 +1015,7 @@
                 let org_name = sp.orgs[sp.selected_org];
                 let ws_name = sp.workspaces[sp.selected_org][sp.workspace_id];
                 let dataset_url = sp.frontend_url.replace(/\/+$/, '')+'/orgs/'+org_name+'/workspaces/'+ws_name+'/datasets/'+sp_response.data.dataset.id;
-                $scope.seqeraPlatformMessages.push('Created dataset: <a href="'+dataset_url+'" target="_blank"><code>'+sp_response.data.dataset.id)+'</code></a>';
+                $scope.seqeraPlatformMessages.push('<span class="glyphicon glyphicon-ok"></span> Created dataset: <code>'+sp_response.data.dataset.id)+'</code> (<a href="'+dataset_url+'" target="_blank">View on Seqera Platform <span class="glyphicon glyphicon-new-window"></span></a>)';
 
                 // Now upload the data to the created dataset
                 var api_url_upload_dataset = api_url_create_dataset+'/'+sp_response.data.dataset.id+'/upload?header=true';
@@ -1031,7 +1031,7 @@
                     method: "POST"
                 }).then(function successCallback(sp_response) {
                     console.log(sp_response);
-                    $scope.seqeraPlatformMessages.push('Successfully uploaded metadata');
+                    $scope.seqeraPlatformMessages.push('<span class="glyphicon glyphicon-ok"></span> Successfully uploaded metadata');
                 }, function errorCallback(sp_response) {
                     $scope.seqeraPlatformMessages.push('Error when uploading metadata (Error '+sp_response.status+' - '+sp_response.statusText+')');
                     $scope.seqeraPlatformMessages.push('<pre><code>'+JSON.stringify(sp_response.data)+'</code></pre>');

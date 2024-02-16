@@ -528,8 +528,8 @@
                             </div>
                           </div>
                         </form>
-                        <div ng-show="seqeraPlatformMessages.length > 0" class="alert alert-info">
-                          <p ng-repeat="x in seqeraPlatformMessages"><ng-bind-html ng-bind-html="x"></ng-bind-html></p>
+                        <div ng-show="seqeraplatform.messages.length > 0" class="alert" ng-class="{'alert-info': !seqeraplatform.hasError, 'alert-danger': seqeraplatform.hasError }">
+                          <p ng-repeat="x in seqeraplatform.messages"><ng-bind-html ng-bind-html="x"></ng-bind-html></p>
                         </div>
                         <p ng-show="savedResultsENAaccessions.length < savedResults.length" class="text-center"><span class="glyphicon glyphicon-refresh fa-spin"></span> Loading <span class="badge"><span ng-bind="savedResultsENAaccessions.length"></span> / <span ng-bind="savedResults.length"></span></span>..</p>
                         <div id="fullSeqeraPlatform_table_wrapper">
@@ -669,9 +669,10 @@
               'credentials_valid': false,
               'orgs': {},
               'workspaces': {},
-              'selected_org': ''
+              'selected_org': '',
+              'messages': [],
+              'hasError': false
             };
-            $scope.seqeraPlatformMessages = [];
 
             // Load saved Seqera Platform connection details from cookie (not localstorage)
             if (document.cookie.indexOf('seqeraPlatformFrontendURL') > -1) {
@@ -989,11 +990,14 @@
 
             $scope.update_seqera_org = function(){
               $scope.seqeraplatform.workspace_id = Object.keys($scope.seqeraplatform.workspaces[$scope.seqeraplatform.selected_org])[0].toString();
+              $scope.seqeraplatform.messages = [];
+              $scope.seqeraplatform.hasError = false;
             }
 
             // Send metadata to Seqera Platform
             $scope.save_seqeraplatform = function(sp) {
-              $scope.seqeraPlatformMessages = [];
+              $scope.seqeraplatform.messages = [];
+              $scope.seqeraplatform.hasError = false;
               // First, create the new dataset
               var api_url_create_dataset = sp.api_base.replace(/\/+$/, '')+'/workspaces/'+sp.workspace_id+'/datasets';
               var create_dataset_formData = {'name': sp.name, 'description': sp.description};
@@ -1008,14 +1012,14 @@
               ).then(function successCallback(sp_response) {
                 console.log(sp_response);
                 if(!("dataset" in sp_response.data) && "message" in sp_response.data){
-                  $scope.seqeraPlatformMessages.push('Error creating dataset: '+sp_response.data.message);
+                  $scope.seqeraplatform.messages.push('Error creating dataset: '+sp_response.data.message);
                   return;
                 }
                 // Build FE URL to published dataset
                 let org_name = sp.orgs[sp.selected_org];
                 let ws_name = sp.workspaces[sp.selected_org][sp.workspace_id];
                 let dataset_url = sp.frontend_url.replace(/\/+$/, '')+'/orgs/'+org_name+'/workspaces/'+ws_name+'/datasets/'+sp_response.data.dataset.id;
-                $scope.seqeraPlatformMessages.push('<span class="glyphicon glyphicon-ok"></span> Created dataset: <code>'+sp_response.data.dataset.id)+'</code> (<a href="'+dataset_url+'" target="_blank">View on Seqera Platform <span class="glyphicon glyphicon-new-window"></span></a>)';
+                $scope.seqeraplatform.messages.push('<span class="glyphicon glyphicon-ok"></span> Created dataset: <code>'+sp_response.data.dataset.id)+'</code> (<a href="'+dataset_url+'" target="_blank">View on Seqera Platform <span class="glyphicon glyphicon-new-window"></span></a>)';
 
                 // Now upload the data to the created dataset
                 var api_url_upload_dataset = api_url_create_dataset+'/'+sp_response.data.dataset.id+'/upload?header=true';
@@ -1031,14 +1035,16 @@
                     method: "POST"
                 }).then(function successCallback(sp_response) {
                     console.log(sp_response);
-                    $scope.seqeraPlatformMessages.push('<span class="glyphicon glyphicon-ok"></span> Successfully uploaded metadata');
+                    $scope.seqeraplatform.messages.push('<span class="glyphicon glyphicon-ok"></span> Successfully uploaded metadata');
                 }, function errorCallback(sp_response) {
-                    $scope.seqeraPlatformMessages.push('Error when uploading metadata (Error '+sp_response.status+' - '+sp_response.statusText+')');
-                    $scope.seqeraPlatformMessages.push('<pre><code>'+JSON.stringify(sp_response.data)+'</code></pre>');
+                    $scope.seqeraplatform.hasError = true;
+                    $scope.seqeraplatform.messages.push('Error when uploading metadata (Error '+sp_response.status+' - '+sp_response.statusText+')');
+                    $scope.seqeraplatform.messages.push('<pre><code>'+JSON.stringify(sp_response.data)+'</code></pre>');
                 });
               }, function errorCallback(sp_response) {
-                $scope.seqeraPlatformMessages.push('Error when creating dataset (Error '+sp_response.status+' - '+sp_response.statusText+')');
-                $scope.seqeraPlatformMessages.push('<pre><code>'+JSON.stringify(sp_response.data)+'</code></pre>');
+                $scope.seqeraplatform.hasError = true;
+                $scope.seqeraplatform.messages.push('Error when creating dataset (<code>'+sp_response.status+' - '+sp_response.statusText+'</code>)');
+                $scope.seqeraplatform.messages.push('<pre><code>'+JSON.stringify(sp_response.data)+'</code></pre>');
               });
             };
         });

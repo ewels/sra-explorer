@@ -537,27 +537,32 @@
                         <p>Send all metadata to Seqera Platform as a saved Dataset, which you can use as an input when launching pipelines.</p>
                         <form id="seqera_platform_form" class="form-horizontal">
                           <div class="form-group">
-                            <div class="col-sm-2">
+                            <div class="col-sm-9" ng-show="!seqeraplatform.credentials_valid">
+                              <div class="alert alert-info" style="padding: 6px 12px;">
+                                Please connect your Seqera Platform account to proceed.
+                              </div>
+                            </div>
+                            <div class="col-sm-2" ng-show="seqeraplatform.credentials_valid">
                               <label class="sr-only" for="sp_organisation">Organisation</label>
                               <select class="form-control" ng-model="seqeraplatform.selected_org" ng-change="update_seqera_org()"> id="sp_organisation">
                                 <option ng-repeat="(orgId, orgName) in seqeraplatform.orgs" value="{{ orgId }}">{{ orgName }}</option>
                               </select>
                             </div>
-                            <div class="col-sm-2">
+                            <div class="col-sm-2" ng-show="seqeraplatform.credentials_valid">
                               <label class="sr-only" for="sp_workspace_id">Workspace</label>
                               <select class="form-control" ng-model="seqeraplatform.workspace_id" id="sp_workspace_id">
                                 <option ng-repeat="(wsId, wsName) in seqeraplatform.workspaces[seqeraplatform.selected_org]" value="{{ wsId }}">{{ wsName }}</option>
                               </select>
                             </div>
-                            <div class="col-sm-2">
+                            <div class="col-sm-2" ng-show="seqeraplatform.credentials_valid">
                               <label class="sr-only" for="sp_name">Dataset name</label>
-                              <input type="text" class="form-control" ng-model="seqeraplatform.name" id="sp_name" placeholder="Dataset name" required>
+                              <input type="text" class="form-control" ng-model="seqeraplatform.name" id="sp_name" placeholder="Dataset name">
                             </div>
-                            <div class="col-sm-3">
+                            <div class="col-sm-3" ng-show="seqeraplatform.credentials_valid">
                               <label class="sr-only" for="sp_description">Dataset description</label>
                               <input type="text" class="form-control" ng-model="seqeraplatform.description" id="sp_description" placeholder="Dataset description">
                             </div>
-                            <div class="col-sm-3">
+                            <div class="col-sm-3 text-right">
                               <button type="submit" class="btn btn-default" data-toggle="modal" data-target="#seqeraPlatformConnectionModal">
                                 <span class="glyphicon glyphicon-log-in"></span> Connect
                               </button>
@@ -996,7 +1001,7 @@
                 url: api_url_get_user,
                 headers: headers,
                 method: "GET"
-              }).success(function(sp_response) {
+              }).then(function successCallback(sp_response) {
                 console.log("Got user:", sp_response);
                 $scope.seqeraplatform.user_id = sp_response.user.id;
                 // Now get orgs and workspaces
@@ -1005,7 +1010,7 @@
                   url: api_url_get_orgs_workspaces,
                   headers: headers,
                   method: "GET"
-                }).success(function(sp_response) {
+                }).then(function successCallback(sp_response) {
                   console.log('Got workspaces', sp_response);
                   angular.forEach(sp_response.orgsAndWorkspaces, function(ws, key) {
                     if(ws.workspaceId && has_workspace_permissions(ws.roles)){
@@ -1020,9 +1025,16 @@
                       $scope.seqeraplatform.workspaces[ws.orgId][ws.workspaceId] = ws.workspaceName;
                     }
                   });
+                }, function errorCallback(sp_response) {
+                  console.log("Error fetching Seqera Platform workspaces", sp_response);
+                  $scope.seqeraplatform.messages.push('Error fetching Seqera Platform workspaces');
+                  $scope.seqeraplatform.hasError = true;
+                  $scope.seqeraplatform.credentials_valid = false;
                 });
               }, function errorCallback(sp_response) {
                 console.log("Error fetching Seqera Platform orgs", sp_response);
+                $scope.seqeraplatform.messages.push('Error fetching Seqera Platform organizations');
+                $scope.seqeraplatform.hasError = true;
                 $scope.seqeraplatform.credentials_valid = false;
               });
             }

@@ -351,26 +351,7 @@
                     <div class="panel panel-default">
                       <div class="panel-heading" role="tab">
                         <h4 class="panel-title">
-                          <a role="button" data-toggle="collapse" data-parent="#fastqAccordion" href="#fastqURLs_niceNames">Cluster Flow FastQ download file (nice filenames)</a>
-                        </h4>
-                      </div>
-                      <div id="fastqURLs_niceNames" class="panel-collapse collapse" role="tabpanel">
-                        <div class="panel-body">
-                          <p>This list of URLs is followed by a nicer filename, with the cleaned dataset title appended. This is suitable for use with the <a href="http://clusterflow.io" target="_blank">Cluster Flow</a> <code>--file_list</code> download option.</p>
-                          <p>
-                            <button class="btn btn-sm btn-default btn-copy" data-clipboard-target="#fastqURLs_niceNames_content"><span class="glyphicon glyphicon-copy"></span> Copy</button>
-                            <button class="btn btn-sm btn-default btn-download" ng-click="download_contents('#fastqURLs_niceNames_content', 'sra_explorer_fastq_nicenames.txt')"><span class="glyphicon glyphicon-download-alt"></span> Download</button>
-                          </p>
-                          <p ng-show="savedResultsENAaccessions.length < savedResults.length" class="text-center"><span class="glyphicon glyphicon-refresh fa-spin"></span> Loading <span class="badge"><span ng-bind="savedResultsENAaccessions.length"></span> / <span ng-bind="savedResults.length"></span></span>..</p>
-                          <pre ng-show="savedResultsENAfastq.length > 0" id="fastqURLs_niceNames_content"><code ng-repeat="x in savedResultsENAfastq">{{ x.fastq_url }}{{ tabChr }}{{ x.fastq_niceFilename }}{{ nlChr }}</code></pre>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div class="panel panel-default">
-                      <div class="panel-heading" role="tab">
-                        <h4 class="panel-title">
-                          <a role="button" data-toggle="collapse" data-parent="#fastqAccordion" href="#fastqURLs_bcbio">bcbio project file for FastQ downloads (nice filenames)</a>
+                          <a role="button" data-toggle="collapse" data-parent="#fastqAccordion" href="#fastqURLs_bcbio">bcbio project file for FastQ downloads</a>
                         </h4>
                       </div>
                       <div id="fastqURLs_bcbio" class="panel-collapse collapse" role="tabpanel">
@@ -428,26 +409,6 @@
                             </div>
                         </div>
                     </div>
-
-                    <div class="panel panel-default">
-                        <div class="panel-heading" role="tab">
-                            <h4 class="panel-title">
-                                <a role="button" data-toggle="collapse" data-parent="#sraAccordion" href="#ftpURLs_niceNames">
-                                    Cluster Flow SRA download file (nice filename)
-                                </a>
-                            </h4>
-                        </div>
-                        <div id="ftpURLs_niceNames" class="panel-collapse collapse" role="tabpanel">
-                            <div class="panel-body">
-                                <p>This list of URLs is followed by a nicer filename, with the cleaned dataset title appended. This is suitable for use with the <a href="http://clusterflow.io" target="_blank">Cluster Flow</a> <code>--file_list</code> download option.</p>
-                                <p>
-                                    <button class="btn btn-sm btn-default btn-copy" data-clipboard-target="#ftpURLs_niceNames_content"><span class="glyphicon glyphicon-copy"></span> Copy</button>
-                                    <button class="btn btn-sm btn-default btn-download" ng-click="download_contents('#ftpURLs_niceNames_content', 'sra_explorer_sra_nicenames.txt')"><span class="glyphicon glyphicon-download-alt"></span> Download</button>
-                                </p>
-                                <pre id="ftpURLs_niceNames_content"><code ng-repeat="x in savedResults">{{ x.sra_url }}{{ tabChr }}{{ x.sra_niceFilename }}{{ nlChr }}</code></pre>
-                            </div>
-                        </div>
-                      </div>
                   </div>
                 </div>
                 <div role="tabpanel" class="tab-pane fade" id="full_metadata_tabcontent">

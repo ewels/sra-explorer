@@ -1003,7 +1003,7 @@
                 method: "GET"
               }).then(function successCallback(sp_response) {
                 console.log("Got user:", sp_response);
-                $scope.seqeraplatform.user_id = sp_response.user.id;
+                $scope.seqeraplatform.user_id = sp_response.data.user.id;
                 // Now get orgs and workspaces
                 var api_url_get_orgs_workspaces = $scope.seqeraplatform.api_base.replace(/\/+$/, '')+'/user/'+$scope.seqeraplatform.user_id+'/workspaces';
                 $http({
@@ -1012,7 +1012,7 @@
                   method: "GET"
                 }).then(function successCallback(sp_response) {
                   console.log('Got workspaces', sp_response);
-                  angular.forEach(sp_response.orgsAndWorkspaces, function(ws, key) {
+                  angular.forEach(sp_response.data.orgsAndWorkspaces, function(ws, key) {
                     if(ws.workspaceId && has_workspace_permissions(ws.roles)){
                       $scope.seqeraplatform.orgs[ws.orgId] = ws.orgName;
                       if($scope.seqeraplatform.selected_org == ''){

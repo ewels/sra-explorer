@@ -651,7 +651,12 @@
            license for SRA-explorer. Thanks!
         */
         const cors_proxy_prefix = "https://proxy.cors.sh/";
-        const cors_proxy_headers = { headers: { 'x-cors-api-key': '1ab68d1c-1b91-4603-8e47-db3de7963c47' }};
+        const cors_proxy_headers = {
+          headers: {
+            'x-cors-api-key': '1ab68d1c-1b91-4603-8e47-db3de7963c47',
+            'x-requested-with': 'https://sra-explorer.info'
+          }
+        };
         var app = angular.module("sraExplorerApp", ['ngSanitize']);
         app.controller("searchCtrl", function($scope, $http) {
 

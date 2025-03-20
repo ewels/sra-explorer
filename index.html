@@ -646,17 +646,10 @@
     <script type="text/javascript">
         /* The EBI ENA implemented CORS (cross-origin resource sharing)
            blocks in February 2025.
-           To keep SRA-explorer functioning, I have implemented a CORS-proxy.
-           The nice folks at https://cors.sh/ have granted a free open-source
-           license for SRA-explorer. Thanks!
+           To keep SRA-explorer functioning, Seqera has provided a
+           proxy service for access to the API from the browser.
         */
-        const cors_proxy_prefix = "https://proxy.cors.sh/";
-        const cors_proxy_headers = {
-          headers: {
-            'x-cors-api-key': '75b12755-c389-406f-8444-b94b4cb0e7f2',
-            'x-requested-with': 'https://sra-explorer.info'
-          }
-        };
+        const ena_api_base = "https://sra-proxy.seqera.io/www.ebi.ac.uk/ena/portal/api/";
         var app = angular.module("sraExplorerApp", ['ngSanitize']);
         app.controller("searchCtrl", function($scope, $http) {
 
@@ -860,8 +853,8 @@
               if($scope.savedResultsENAaccessions.length < $scope.savedResults.length){
                 angular.forEach($scope.savedResults, function(value, key) {
                   if($scope.savedResultsENAaccessions.indexOf(value['accession']) === -1){
-                    var ENAsearchURL = cors_proxy_prefix+'https://www.ebi.ac.uk/ena/portal/api/filereport?result=read_run&fields=fastq_ftp&format=JSON&accession='+value['accession'];
-                    $http.get(ENAsearchURL, cors_proxy_headers).success(function(s_response) {
+                    var ENAsearchURL = ena_api_base+'filereport?result=read_run&fields=fastq_ftp&format=JSON&accession='+value['accession'];
+                    $http.get(ENAsearchURL).success(function(s_response) {
                       for (var i = 0; i < s_response.length; i++) {
                         var ftpFastQ = s_response[i]["fastq_ftp"];
                         if (ftpFastQ != undefined) {

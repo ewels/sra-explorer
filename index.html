@@ -644,12 +644,7 @@
 
     <!-- SRA-Explorer Code -->
     <script type="text/javascript">
-        /* The EBI ENA implemented CORS (cross-origin resource sharing)
-           blocks in February 2025.
-           To keep SRA-explorer functioning, Seqera has provided a
-           proxy service for access to the API from the browser.
-        */
-        const ena_api_base = "https://proxy.sra-explorer.info/www.ebi.ac.uk/ena/portal/api/";
+        const ena_api_base = "https://www.ebi.ac.uk/ena/portal/api/";
         var app = angular.module("sraExplorerApp", ['ngSanitize']);
         app.controller("searchCtrl", function($scope, $http) {
 
